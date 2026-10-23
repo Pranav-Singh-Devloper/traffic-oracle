@@ -31,3 +31,24 @@ Template: **Context / Decision / Consequences / Status**
 - **Bootstrap:** resamples whole days of target timestamps; CI shown for the first seed of each model.
 - **Seasonal naive** falls back to the historical average when the day-earlier value is missing (reported in prediction metadata).
 - **Status:** Accepted.
+
+## ADR-006: Reduced ML budget for a laptop
+- **Context:** Target machine is a MacBook (M3 Pro, 11 cores, 18 GB); the owner asked not to overload it.
+- **Decision:** ML jobs use 6 cores at low priority. Optuna: 15 trials per XGBoost variant (6 for RF) instead of 40. Pooled XGBoost trains on a random 25% of training rows, RF on 10%, trees capped at 400. Tuning optimises val MAE at horizon 6 (RF: mean over horizons).
+- **Consequences:** ML numbers are probably slightly worse than a full-budget run; this is stated in the report. Comparisons between ML models share the same budget.
+- **Status:** Accepted.
+
+## ADR-007: Cheaper STGAT training
+- **Context:** Full dense attention at all 12 time steps cost 3.7 min/epoch on the MPS GPU (~2.5 h per seed). A sparse neighbor-list GAT (`SparseGATLayer`, numerically equal to the dense layer; tested) did not help because the gathers dominate.
+- **Decision:** (1) Spatial GAT is applied on the last 4 of 12 time steps (`spatial_steps: 4`); earlier steps still pass through the temporal conv and the residual path. (2) Each training epoch uses a random 34% of the windows (adjacent windows are near-duplicates). (3) Max 40 epochs, patience 8. GRU-nograph uses the same epoch fraction and epochs for fairness.
+- **Consequences:** ~0.6 min/epoch, ~30 min per seed worst case. STGAT's spatial module sees the most recent 20 minutes of neighbor states, not the whole hour; results are for this reduced model.
+- **Status:** Accepted.
+
+## ADR-008: Gating hybrid uses part of validation
+- **Context:** The gate is trained on validation predictions (SPEC 10.2).
+- **Decision:** First 80% of val fits the gate, last 20% early-stops it. Base-model selection also used val, so val is not fully independent for the gate; this is a documented limitation.
+- **Status:** Accepted.
+
+## ADR-009: Spec corrections
+- The spec attributes CityFlow to "Zheng et al."; the paper's first author is Huichu Zhang. `refs.bib` uses the correct authors.
+- Default STGAT graph is `bidirectional` (more information; DCRNN also uses both directions); ablation A3 tests forward and backward separately.

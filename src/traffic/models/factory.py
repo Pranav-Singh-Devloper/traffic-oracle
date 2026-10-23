@@ -54,6 +54,8 @@ def build_model(cfg: dict, w: np.ndarray, locations, n_nodes: int) -> torch.nn.M
             mc.get("readout", "last"),
             mc.get("dropedge", 0.0),
             horizon if name == "hybrid_residual" else 0,
+            True,
+            mc.get("spatial_steps", 4),
         )
         return ResidualHybrid(net) if name == "hybrid_residual" else net
     raise ValueError(name)

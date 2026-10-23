@@ -12,6 +12,7 @@ model:
   edge_bias: false
   readout: last          # last | attn
   dropedge: 0.0
+  spatial_steps: 4       # GAT on the last 4 of 12 steps (0 = all); see ADR-007
   node_embedding: true
   use_time_features: true
 train:
@@ -25,4 +26,5 @@ train:
   loss: mae
   noise_std: 0.0
   sensor_mask_p: 0.0
+  epoch_fraction: 0.34      # each epoch sees a random third of the (highly redundant) windows
 seeds: [0, 1, 2]

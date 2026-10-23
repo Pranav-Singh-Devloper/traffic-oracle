@@ -92,7 +92,15 @@ class Trainer:
             sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=t["max_epochs"])
         else:
             sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, factor=0.5, patience=5)
-        it = BatchIterator(train_w, t["batch_size"], True, self.seed, self.channels, aux_train)
+        it = BatchIterator(
+            train_w,
+            t["batch_size"],
+            True,
+            self.seed,
+            self.channels,
+            aux_train,
+            t.get("epoch_fraction", 1.0),
+        )
         best, best_state, bad, rows = float("inf"), None, 0, []
         for ep in range(1, t["max_epochs"] + 1):
             self.model.train()

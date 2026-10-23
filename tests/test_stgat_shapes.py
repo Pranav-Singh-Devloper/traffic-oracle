@@ -27,7 +27,7 @@ def test_shapes_and_attention():
         m = STGAT(adj, in_channels=8, horizon=12, d=16, heads=4, **kw)
         y, attn = m(torch.randn(3, 12, 10, 8), return_attn=True)
         assert y.shape == (3, 12, 10)
-        assert attn.shape == (3, 12, 4, 10, 10)
+        assert attn.shape == (3, 4, 4, 10, 10)
     g = GRUNoGraph(10, 8, 12, d=16)
     assert g(torch.randn(3, 12, 10, 8)).shape == (3, 12, 10)
 

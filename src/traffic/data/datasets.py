@@ -57,7 +57,9 @@ class BatchIterator:
         seed: int = 0,
         channels: list[int] | None = None,
         aux: np.ndarray | None = None,
+        fraction: float = 1.0,
     ):
+        self.fraction = fraction  # use a random share of the windows each pass (train only)
         self.w, self.bs, self.shuffle, self.channels = w, batch_size, shuffle, channels
         self.aux = aux  # optional [S, F, N] array aligned with w.anchors (hybrid base predictions)
         self.rng = np.random.default_rng(seed)
@@ -65,11 +67,12 @@ class BatchIterator:
         self.foff = np.arange(1, w.F + 1)
 
     def __len__(self) -> int:
-        return -(-len(self.w) // self.bs)
+        return -(-int(len(self.w) * self.fraction) // self.bs)
 
     def __iter__(self):
         n = len(self.w)
         order = self.rng.permutation(n) if self.shuffle else np.arange(n)
+        n = int(n * self.fraction)
         for i in range(0, n, self.bs):
             pos = order[i : i + self.bs]
             a = self.w.anchors[pos]

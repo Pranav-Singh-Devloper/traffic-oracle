@@ -74,3 +74,24 @@ def test_mean_attention_and_edge_bias_run():
     for kw in ({"attention": "mean"}, {"edge_bias": True}):
         out = DenseGATLayer(8, 4, heads=2, **kw)(x, adj)
         assert out.shape == (2, 12, 8)
+
+
+def test_sparse_layer_equals_dense_layer():
+    from traffic.models.layers.gat_dense import SparseGATLayer
+
+    adj, _ = _graph(15, seed=3)
+    adj = adj * torch.rand(15, 15)  # non-trivial edge weights
+    for edge_bias in (False, True):
+        dense = DenseGATLayer(8, 4, heads=3, edge_bias=edge_bias).eval()
+        sparse = SparseGATLayer(8, 4, adj, heads=3, edge_bias=edge_bias).eval()
+        sd = dense.state_dict()
+        with torch.no_grad():
+            if edge_bias:
+                sd["beta"] = torch.randn(3)
+            dense.load_state_dict(sd)
+            sparse.load_state_dict(sd, strict=False)  # sparse also has index buffers
+        x = torch.randn(2, 15, 8)
+        od, ad = dense(x, adj, return_attn=True)
+        os_, as_ = sparse(x, adj, return_attn=True)
+        torch.testing.assert_close(od, os_, atol=1e-5, rtol=1e-5)
+        torch.testing.assert_close(ad, as_, atol=1e-5, rtol=1e-5)

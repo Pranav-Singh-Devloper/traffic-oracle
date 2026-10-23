@@ -112,3 +112,74 @@ class DenseGATLayer(nn.Module):
         out = out.reshape(b, n, k * d) if self.concat else out.mean(2)
         out = out + self.bias
         return (out, alpha) if return_attn else out
+
+
+class SparseGATLayer(nn.Module):
+    """Same function as ``DenseGATLayer`` (GAT v1) using padded neighbor lists.
+
+    Instead of an [N, N] score matrix per head it keeps [N, D_max] scores (D_max = largest
+    neighbourhood incl. self, 26 for our graph vs N = 207), so memory traffic drops ~8x.
+    Parameters have the same names as the dense layer, so weights can be copied between them
+    (see tests/test_gat_layer.py, which asserts numerical equality).
+    """
+
+    def __init__(
+        self,
+        in_dim: int,
+        out_dim: int,
+        adj: torch.Tensor,
+        heads: int = 4,
+        concat: bool = True,
+        attn_dropout: float = 0.0,
+        negative_slope: float = 0.2,
+        edge_bias: bool = False,
+    ):
+        super().__init__()
+        self.out_dim, self.heads, self.concat, self.slope = out_dim, heads, concat, negative_slope
+        self.attn_dropout = nn.Dropout(attn_dropout)
+        self.lin_src = nn.Linear(in_dim, heads * out_dim, bias=False)
+        self.att_src = nn.Parameter(torch.empty(1, heads, out_dim))
+        self.att_dst = nn.Parameter(torch.empty(1, heads, out_dim))
+        self.bias = nn.Parameter(torch.zeros(heads * out_dim if concat else out_dim))
+        self.beta = nn.Parameter(torch.zeros(heads)) if edge_bias else None
+        nn.init.xavier_uniform_(self.lin_src.weight)
+        nn.init.xavier_uniform_(self.att_src)
+        nn.init.xavier_uniform_(self.att_dst)
+        n = adj.shape[0]
+        nbr = (adj > 0) | torch.eye(n, dtype=torch.bool)
+        d_max = int(nbr.sum(1).max())
+        idx = torch.zeros(n, d_max, dtype=torch.long)
+        msk = torch.zeros(n, d_max, dtype=torch.bool)
+        w = torch.zeros(n, d_max)
+        for i in range(n):
+            js = torch.nonzero(nbr[i]).squeeze(1)
+            idx[i, : len(js)] = js
+            msk[i, : len(js)] = True
+            w[i, : len(js)] = adj[i, js].clamp(min=0).float()
+        self.register_buffer("idx", idx)
+        self.register_buffer("msk", msk)
+        self.register_buffer("w", w)
+        self.n = n
+
+    def forward(self, h: torch.Tensor, adj: torch.Tensor | None = None, return_attn: bool = False):
+        """h: [B, N, in_dim] -> [B, N, heads*out_dim]; attn (dense [B,K,N,N]) only if asked."""
+        b, n, _ = h.shape
+        k, d = self.heads, self.out_dim
+        xs = self.lin_src(h).view(b, n, k, d)
+        a_src = (xs * self.att_src).sum(-1)  # [B, N, K]
+        a_dst = (xs * self.att_dst).sum(-1)
+        e = F.leaky_relu(a_dst.unsqueeze(2) + a_src[:, self.idx], self.slope)  # [B, N, Dm, K]
+        if self.beta is not None:
+            e = e + self.w[None, :, :, None] * self.beta.view(1, 1, 1, k)
+        e = e.masked_fill(~self.msk[None, :, :, None], float("-inf"))
+        alpha = self.attn_dropout(torch.softmax(e, dim=2))
+        out = (alpha.unsqueeze(-1) * xs[:, self.idx]).sum(2)  # [B, N, K, D]
+        out = out.reshape(b, n, k * d) if self.concat else out.mean(2)
+        out = out + self.bias
+        if not return_attn:
+            return out
+        dense = h.new_zeros(b, k, n, n)
+        rows = torch.arange(n, device=h.device)[:, None].expand_as(self.idx)
+        a = alpha.permute(0, 3, 1, 2) * self.msk[None, None]  # [B, K, N, Dm]
+        dense[:, :, rows[self.msk], self.idx[self.msk]] = a[:, :, self.msk]
+        return out, dense

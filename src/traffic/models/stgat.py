@@ -14,7 +14,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from traffic.models.layers.gat_dense import DenseGATLayer
+from traffic.models.layers.gat_dense import DenseGATLayer, SparseGATLayer
 
 
 class GatedTemporalConv(nn.Module):
@@ -45,32 +45,53 @@ class GRUTemporal(nn.Module):
 
 class STBlock(nn.Module):
     def __init__(
-        self, d, heads, dilation, temporal, dropout, attn_dropout, attention, edge_bias, v2
+        self,
+        d,
+        heads,
+        dilation,
+        temporal,
+        dropout,
+        attn_dropout,
+        attention,
+        edge_bias,
+        v2,
+        sparse_adj=None,
+        spatial_steps: int = 0,
     ):
         super().__init__()
+        self.spatial_steps = spatial_steps  # 0 = all steps; k = only the last k (cheaper)
         self.temporal = GRUTemporal(d) if temporal == "gru" else GatedTemporalConv(d, 3, dilation)
-        self.gat = DenseGATLayer(
-            d,
-            d // heads,
-            heads,
-            True,
-            attn_dropout,
-            edge_bias=edge_bias,
-            v2=v2,
-            attention=attention,
-        )
+        if sparse_adj is not None:  # exact same function as the dense layer, ~8x less memory
+            self.gat = SparseGATLayer(
+                d, d // heads, sparse_adj, heads, True, attn_dropout, edge_bias=edge_bias
+            )
+        else:
+            self.gat = DenseGATLayer(
+                d,
+                d // heads,
+                heads,
+                True,
+                attn_dropout,
+                edge_bias=edge_bias,
+                v2=v2,
+                attention=attention,
+            )
         self.norm = nn.LayerNorm(d)
         self.drop = nn.Dropout(dropout)
 
     def forward(self, x: torch.Tensor, adj: torch.Tensor, return_attn: bool = False):
         b, t, n, d = x.shape
         z = self.temporal(x)
-        g = self.gat(z.reshape(b * t, n, d), adj, return_attn=return_attn)
+        k = t if self.spatial_steps in (0, None) or self.spatial_steps >= t else self.spatial_steps
+        zs = z[:, t - k :]  # spatial attention on the last k steps only
+        g = self.gat(zs.reshape(b * k, n, d), adj, return_attn=return_attn)
         attn = None
         if return_attn:
             g, attn = g
-            attn = attn.view(b, t, *attn.shape[1:])  # [B, T, K, N, N]
-        g = self.drop(F.elu(g)).view(b, t, n, d)
+            attn = attn.view(b, k, *attn.shape[1:])  # [B, k, K, N, N]
+        g = self.drop(F.elu(g)).view(b, k, n, d)
+        if k < t:  # earlier steps get no spatial update (identity branch)
+            g = torch.cat([torch.zeros(b, t - k, n, d, device=g.device, dtype=g.dtype), g], dim=1)
         out = self.norm(x + g)
         return (out, attn) if return_attn else out
 
@@ -93,6 +114,8 @@ class STGAT(nn.Module):
         readout: str = "last",
         dropedge: float = 0.0,
         base_horizon: int = 0,
+        sparse: bool = True,
+        spatial_steps: int = 4,
     ):
         super().__init__()
         n = adj.shape[0]
@@ -111,6 +134,8 @@ class STGAT(nn.Module):
                 "mean" if attention == "mean" else "gat",
                 edge_bias,
                 attention == "gatv2",
+                adj.float() if (attention == "gat" and dropedge == 0.0 and sparse) else None,
+                spatial_steps,
             )
             for i in range(layers)
         )

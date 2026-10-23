@@ -19,4 +19,5 @@ train:
   loss: mae
   noise_std: 0.0
   sensor_mask_p: 0.0
+  epoch_fraction: 0.34      # each epoch sees a random third of the (highly redundant) windows
 seeds: [0, 1, 2]
