@@ -1,0 +1,12 @@
+# Shared viva questions (everyone must answer)
+
+1. **Why a chronological split and not a random one? What leaks otherwise?** Samples overlap (stride 1) and speed is autocorrelated, so random splits put near-copies of test windows in training and make errors look much smaller. We split the timestamp axis 70/10/20 and build windows inside each split (`data/split.py`, `tests/test_split_no_leakage.py`).
+2. **Strict vs DCRNN protocol?** DCRNN builds all windows then splits samples; boundary windows overlap across splits. We use strict as primary and label DCRNN-style numbers "literature-comparable".
+3. **Why is speed 0 treated as missing and how do masked losses work?** A 0 reading is an outage. Loss/metrics are `Σ m·ℓ / Σ m`, so only observed entries produce gradients/scores (`training/losses.py`, `evaluation/metrics.py`).
+4. **How is the adjacency built? What are σ and κ? Which way does information flow?** `W_ij = exp(-(d_ij/σ)²)` thresholded at κ = 0.1, σ = std of finite road distances; matches `adj_mx.pkl` (max diff 1e-7). `A[i,j]>0` means i aggregates from j; `W` = downstream senders, `Wᵀ` = upstream (ADR-002).
+5. **Write the GAT equations. What does the mask do?** `e_ij = LeakyReLU(aᵀ[Wh_i‖Wh_j])`, `α = softmax_j`, `h'_i = Σ α_ij W h_j`; non-neighbors are set to −∞ before the softmax, so they get zero weight.
+6. **GAT vs GCN vs GATv2?** GCN: fixed normalised weights. GAT: learned, input-dependent weights but "static" ranking of neighbors. GATv2: nonlinearity before the attention vector gives dynamic attention.
+7. **Why does the hybrid need out-of-fold predictions?** In-sample XGBoost residuals are too small (overfit); the residual model would face larger residuals at test time. OOF via forward-chaining CV gives realistic residuals without using the future.
+8. **What does the GRU-no-graph ablation prove that XGBoost vs STGAT does not?** It holds the model family, inputs, width and decoder fixed and removes only the spatial layers, so any gap is due to the graph, not deep learning in general.
+9. **What is the Diebold–Mariano test and why HAC?** It tests equal predictive accuracy from a loss-differential series; overlapping windows and persistent errors make that series autocorrelated, so a HAC (Newey–West) variance is needed.
+10. **What are the headline results and the biggest limitation?** See `README.md` results table (auto-generated). Limitation: single city/season, speed only, fixed distance graph, reduced tuning/compute budget, test period has more outages.
