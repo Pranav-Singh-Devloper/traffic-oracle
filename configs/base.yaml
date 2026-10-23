@@ -17,3 +17,4 @@ split_protocol: strict             # strict | dcrnn
 use_daily_lag: false
 debug: {n_sensors: 10, n_days: 2, epochs: 1}
 significance_pairs: []   # [model_a, model_b] pairs for Diebold-Mariano; filled in as models are added
+resources: {n_jobs: 6, torch_threads: 4}   # keep the laptop responsive (11 cores total)

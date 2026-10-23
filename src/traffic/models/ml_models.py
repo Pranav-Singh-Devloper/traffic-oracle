@@ -17,6 +17,8 @@ from sklearn.ensemble import RandomForestRegressor
 from traffic.data.pipeline import Prepared
 from traffic.features.build_tabular import Tabular, subsample_rows, targets
 
+N_JOBS = 6  # leave cores free for the rest of the machine (set from configs/base.yaml)
+
 
 def make_xgb(
     params: dict,
@@ -41,9 +43,9 @@ def make_xgb(
 
 
 def fit_xgb(
-    xtr, ytr, xva, yva, params, categorical, early_stopping, n_jobs=-1, seed=42
+    xtr, ytr, xva, yva, params, categorical, early_stopping, n_jobs=None, seed=42
 ) -> xgb.XGBRegressor:
-    m = make_xgb(params, categorical, xtr.shape[1], early_stopping, n_jobs, seed)
+    m = make_xgb(params, categorical, xtr.shape[1], early_stopping, n_jobs or N_JOBS, seed)
     m.fit(xtr, ytr, eval_set=[(xva, yva)], verbose=False)
     return m
 
@@ -63,7 +65,7 @@ def train_xgb_pooled(
     cfg: dict,
     tabs: dict[str, Tabular],
     out_dir: Path | None = None,
-    n_jobs: int = -1,
+    n_jobs: int | None = None,
     log=print,
 ) -> tuple[np.ndarray, dict[int, xgb.XGBRegressor]]:
     """One pooled model per horizon (xgb_global / xgb_spatial)."""
@@ -131,7 +133,7 @@ def train_xgb_per_segment(
                     cfg["seed"],
                 )
             )
-        for j, hh, yp, bi in Parallel(n_jobs=-1)(jobs):
+        for j, hh, yp, bi in Parallel(n_jobs=N_JOBS)(jobs):
             pred[:, hh - 1, j] = yp
             iters[(j, hh)] = bi
         log(f"  h={h:2d} {n} sensor models, {time.time() - t0:.0f}s")
@@ -158,7 +160,7 @@ def train_rf(
         "share_dropped_missing_target": float(1 - full.mean()),
     }
     log(f"  RF rows: {info}")
-    rf = RandomForestRegressor(n_jobs=-1, random_state=cfg["seed"], **mc["params"])
+    rf = RandomForestRegressor(n_jobs=N_JOBS, random_state=cfg["seed"], **mc["params"])
     t0 = time.time()
     rf.fit(tabs["train"].flat()[idx], y[idx])
     log(f"  fit {time.time() - t0:.0f}s")

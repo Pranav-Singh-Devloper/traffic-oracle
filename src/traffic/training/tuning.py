@@ -9,8 +9,10 @@ import optuna
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
+from traffic.models import ml_models
 from traffic.models.ml_models import fit_xgb
 
+N_JOBS = ml_models.N_JOBS
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 
@@ -31,7 +33,7 @@ def tune_xgb(xtr, ytr, xva, yva, categorical, n_trials: int, seed: int, base: di
             "min_child_weight": trial.suggest_int("min_child_weight", 1, 20),
             "reg_lambda": trial.suggest_float("reg_lambda", 1e-3, 10, log=True),
             "gamma": trial.suggest_float("gamma", 0.0, 5.0),
-            "n_estimators": 800,
+            "n_estimators": 400,
             "objective": trial.suggest_categorical(
                 "objective", ["reg:squarederror", "reg:absoluteerror", "reg:pseudohubererror"]
             ),
@@ -46,7 +48,7 @@ def tune_xgb(xtr, ytr, xva, yva, categorical, n_trials: int, seed: int, base: di
     st = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=seed))
     st.optimize(objective, n_trials=n_trials)
     df = st.trials_dataframe()
-    best = {**base, **st.best_params, "n_estimators": 800}
+    best = {**base, **st.best_params, "n_estimators": 400}
     return best, df
 
 
@@ -61,7 +63,7 @@ def tune_rf(xtr, ytr, xva, yva, n_trials: int, seed: int):
             "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 20),
             "max_samples": 0.5,
         }
-        rf = RandomForestRegressor(n_jobs=-1, random_state=seed, **params).fit(xtr, ytr)
+        rf = RandomForestRegressor(n_jobs=N_JOBS, random_state=seed, **params).fit(xtr, ytr)
         return _mae(yva, rf.predict(xva))
 
     st = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=seed))

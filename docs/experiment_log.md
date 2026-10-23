@@ -13,3 +13,4 @@
 | 2026-10-24 01:33 | xgb_spatial | 294e758+dirty | 95415b07 | `scripts/train_ml.py --model xgb_spatial --debug` | {"train_seconds": 2} |
 | 2026-10-24 01:35 | stgat_seed0 | 294e758+dirty | c18ea6c9 | `scripts/train_dl.py --model stgat --debug` | {"val_mae": 5.3779, "epochs": 1, "seconds": 7} |
 | 2026-10-24 01:35 | gru_nograph_seed0 | 294e758+dirty | dc89e14d | `scripts/train_dl.py --model gru_nograph --debug` | {"val_mae": 5.3093, "epochs": 1, "seconds": 2} |
+| 2026-10-24 01:42 | xgb_global | 65ad767+dirty | 132622dd | `scripts/train_ml.py --model xgb_global --debug` | {"train_seconds": 1} |

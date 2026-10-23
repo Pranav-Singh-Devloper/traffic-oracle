@@ -43,6 +43,7 @@ def main() -> None:
     if args.debug:
         cfg["train"]["max_epochs"] = 1
         seeds = seeds[:1]
+    torch.set_num_threads(cfg["resources"]["torch_threads"])
     p = prepare(cfg, cfg["paths"]["raw"], debug=args.debug)
     device = get_device()
     sizes = {k: len(w) for k, w in p.windows.items()}

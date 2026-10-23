@@ -74,7 +74,7 @@ def run_tuning(p, cfg, tabs, name: str, spatial: bool) -> None:
             ytr, yva = ytr.ravel(), yva.ravel()
         itr = subsample_rows(mt, tc["train_rows"], 1.0, cfg["seed"])
         iva = subsample_rows(mv, tc["val_rows"], 1.0, cfg["seed"])
-        base = {"n_estimators": 800}
+        base = {"n_estimators": 400}
         best, df = tuning.tune_xgb(
             xtr[itr],
             ytr[itr],
@@ -102,6 +102,7 @@ def main() -> None:
     ap.add_argument("--no-tuned", action="store_true", help="ignore configs/ml/<name>.best.yaml")
     args = ap.parse_args()
     name = NAMES[args.model]
+    mm.N_JOBS = tuning.N_JOBS = load_config("configs/base.yaml")["resources"]["n_jobs"]
     cfg = load_config(f"configs/ml/{name}.yaml")
     best = Path(f"configs/ml/{name}.best.yaml")
     if best.exists() and not args.no_tuned and not args.tune:
