@@ -1,0 +1,10 @@
+inherits: base.yaml
+model:
+  name: rf_multioutput
+  params:
+    n_estimators: 135
+    max_depth: 12
+    max_features: 0.5
+    min_samples_leaf: 11
+    max_samples: 0.5
+  row_subsample: 0.1

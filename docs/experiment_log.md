@@ -26,3 +26,5 @@
 | 2026-10-24 02:25 | abl_A11_H24_seed0 | 77d240b+dirty | f5dee4c9 | `scripts/train_dl.py --model stgat --name abl_A11_H24 --out ablations --seeds 0 --set train.max_epochs=25 history_steps=24 --debug` | {"val_mae": 5.657, "epochs": 1, "seconds": 2} |
 | 2026-10-24 02:25 | abl_A3_forward_seed0 | 77d240b+dirty | 952ca7f7 | `scripts/train_dl.py --model stgat --name abl_A3_forward --out ablations --seeds 0 --set train.max_epochs=25 graph.variant=forward --debug` | {"val_mae": 5.4698, "epochs": 1, "seconds": 2} |
 | 2026-10-24 02:25 | abl_A3_backward_seed0 | 77d240b+dirty | 843a8071 | `scripts/train_dl.py --model stgat --name abl_A3_backward --out ablations --seeds 0 --set train.max_epochs=25 graph.variant=backward --debug` | {"val_mae": 5.36, "epochs": 1, "seconds": 2} |
+| 2026-10-24 02:27 | xgb_per_segment | c47669b+dirty | ec42d1cb | `scripts/train_ml.py --model xgb_per_segment` | {"train_seconds": 198} |
+| 2026-10-24 02:29 | rf_multioutput | c47669b+dirty | a1424194 | `scripts/train_ml.py --model rf` | {"train_seconds": 56} |
