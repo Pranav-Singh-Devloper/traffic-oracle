@@ -16,5 +16,21 @@ scaler: global                     # global | per_sensor
 split_protocol: strict             # strict | dcrnn
 use_daily_lag: false
 debug: {n_sensors: 10, n_days: 2, epochs: 1}
-significance_pairs: []   # [model_a, model_b] pairs for Diebold-Mariano; filled in as models are added
+significance_pairs:
+  - [xgb_spatial, xgb_global]
+  - [xgb_global, xgb_per_segment]
+  - [xgb_spatial, xgb_per_segment]
+  - [xgb_global, persistence]
+  - [stgat, xgb_global]
+  - [stgat, xgb_spatial]
+  - [stgat, gru_nograph]
+  - [stgat, xgb_per_segment]
+  - [hybrid_residual, xgb_global]
+  - [hybrid_residual, stgat]
+  - [hybrid_residual, hybrid_average]
+  - [hybrid_gating, xgb_global]
+  - [hybrid_gating, stgat]
+  - [hybrid_average, xgb_global]
+  - [hybrid_average, stgat]
+#   # [model_a, model_b] pairs for Diebold-Mariano; filled in as models are added
 resources: {n_jobs: 6, torch_threads: 4}   # keep the laptop responsive (11 cores total)

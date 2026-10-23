@@ -1,13 +1,18 @@
 \begin{table}[t]
 \centering
-\caption{Test-set error by model and horizon (mph; MAPE in \%).}\label{tab:main}
-\begin{tabular}{lrrrrrrrrr}
+\caption{Test-set error (mph) by model and horizon (minutes).}\label{tab:main}
+\footnotesize\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrr}
 \toprule
-model & MAE@15min & MAE@30min & MAE@60min & RMSE@15min & RMSE@30min & RMSE@60min & MAPE@15min & MAPE@30min & MAPE@60min \\
+model & MAE@15 & MAE@30 & MAE@60 & RMSE@15 & RMSE@30 & RMSE@60 \\
 \midrule
-historical average & 4.19 & \textbf{4.19} & \textbf{4.19} & 7.86 & \textbf{7.86} & \textbf{7.86} & 13.06 & 13.06 & \textbf{13.06} \\
-persistence & \textbf{3.49} & 4.20 & 5.37 & \textbf{6.39} & 8.02 & 10.30 & \textbf{8.60} & \textbf{10.83} & 14.48 \\
-seasonal naive & 5.50 & 5.50 & 5.50 & 10.71 & 10.71 & 10.71 & 15.57 & 15.57 & 15.57 \\
+historical average & 4.19 & 4.19 & 4.19 & 7.86 & 7.86 & 7.86 \\
+persistence & 3.49 & 4.20 & 5.37 & 6.39 & 8.02 & 10.30 \\
+rf multioutput & 3.14 & 3.80 & 4.73 & 5.70 & 6.89 & 8.25 \\
+seasonal naive & 5.50 & 5.50 & 5.50 & 10.71 & 10.71 & 10.71 \\
+xgb global & 2.88 & 3.33 & 3.78 & 5.69 & 6.80 & 7.76 \\
+xgb per segment & 2.86 & 3.28 & \textbf{3.68} & 5.60 & 6.62 & \textbf{7.52} \\
+xgb spatial & \textbf{2.82} & \textbf{3.26} & 3.73 & \textbf{5.46} & \textbf{6.54} & 7.54 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}

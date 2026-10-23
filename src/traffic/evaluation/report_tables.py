@@ -41,12 +41,14 @@ def to_latex(
             cells.append(s)
         body.append(" & ".join(cells) + r" \\")
     head = " & ".join(c.replace("_", r"\_") for c in cols) + r" \\"
+    spec = "l" + "r" * (len(cols) - 1)
     return (
         "\\begin{table}[t]\n\\centering\n"
         f"\\caption{{{caption}}}\\label{{{label}}}\n"
-        f"\\begin{{tabular}}{{l{'r' * (len(cols) - 1)}}}\n\\toprule\n{head}\n\\midrule\n"
+        "\\footnotesize\\resizebox{\\columnwidth}{!}{%\n"
+        f"\\begin{{tabular}}{{{spec}}}\n\\toprule\n{head}\n\\midrule\n"
         + "\n".join(body)
-        + "\n\\bottomrule\n\\end{tabular}\n\\end{table}\n"
+        + "\n\\bottomrule\n\\end{tabular}}\n\\end{table}\n"
     )
 
 

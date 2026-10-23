@@ -1,0 +1,109 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx,booktabs,amsmath,amssymb,cite,url}
+\graphicspath{{../figures/}}
+\input{../tables/numbers.tex}
+\begin{document}
+\title{Traffic Speed Forecasting on METR-LA: Segment-Level Machine Learning and the Case for Graph Models (Phase 1)}
+\author{\IEEEauthorblockN{Project team (names to be filled in)}}
+\maketitle
+
+\begin{abstract}
+We forecast freeway speed 5--60 minutes ahead on the METR-LA sensor network (\graphNodes{} loop detectors, 4 months) and ask whether information from neighbouring sensors helps beyond each sensor's own history.
+Using a strict chronological protocol, masked metrics and train-only preprocessing, we compare naive baselines, per-segment and pooled XGBoost, a multi-output Random Forest and an XGBoost model with hand-engineered neighbour features.
+The best models reduce MAE at 15 minutes from \maePersistenceFifteen{} mph (persistence) to \maeXgbSpatialFifteen{} mph, and at 60 minutes from \maePersistenceSixty{} to \maeXgbPerSegmentSixty{} mph.
+Neighbour features give a small but statistically consistent gain over the pooled model (\gapAllFifteen{} mph at 15 min), concentrated in peak hours and congested states, but the gain does not grow with horizon.
+This motivates, but does not prove, the benefit of learned graph models studied in Phase 2.
+\end{abstract}
+
+\section{Introduction}
+Congestion on a freeway does not stay where it starts: a jam's tail moves upstream, so the state of downstream neighbours is informative about a sensor's near future.
+Per-segment models see only their own series and can use this only indirectly.
+Our hypothesis is that graph-aware models help most at longer horizons and during peaks.
+Phase 1 builds the data pipeline and evaluation protocol, tests how far segment-level machine learning goes, and quantifies, with a ``bridge'' experiment, how much of the graph benefit hand-made spatial features capture.
+Contributions: (i) a leakage-safe protocol with masked metrics; (ii) five ML forecasters and three baselines evaluated on all horizons, peak/off-peak and congested/free-flow slices; (iii) a gap analysis with paired block-bootstrap confidence intervals.
+
+\section{Related Work}
+Classical approaches use historical averages and ARIMA-type models.
+Gradient-boosted trees \cite{chen2016xgboost} and random forests \cite{breiman2001rf} are strong tabular baselines.
+Graph neural networks model the road network explicitly: DCRNN \cite{li2018dcrnn} uses diffusion convolution in a recurrent encoder--decoder (and introduced the METR-LA preprocessing used here), STGCN \cite{yu2018stgcn}, Graph WaveNet \cite{wu2019graphwavenet}, ASTGCN \cite{guo2019astgcn} and GMAN \cite{zheng2020gman} add convolutions, adaptive graphs and attention.
+Graph attention \cite{velickovic2018gat,brody2022gatv2} is the basis of Phase 2.
+
+\section{Dataset and EDA}
+METR-LA \cite{li2018dcrnn,jagadish2014bigdata} contains \graphNodes{} sensors at 5-minute resolution from \splitTrainStart{} to \splitTestEnd{} (34,272 timestamps). It records \textbf{speed only}; there is no flow or occupancy.
+A reading of 0 mph denotes a sensor outage, not stopped traffic; \missingRate\% of readings are 0, and \networkOutages{} timestamps have at least 90\% of sensors missing simultaneously.
+We therefore mask zeros in losses and metrics and never impute targets.
+Mean speed is \meanSpeed{} mph; \congPeak\% of weekday-peak observations are below 40 mph versus \congOffpeak\% off-peak (Fig.~\ref{fig:eda}).
+The road graph has \graphEdges{} directed edges; its largest strongly connected component has \graphSCC{} sensors (diameter \graphDiameter{}).
+Median pairwise correlation falls with graph distance, from \corrOneHop{} at one hop to \corrTwoHop{} at two and \corrEightHop{} at eight hops, so neighbours are informative.
+Directional evidence is weaker: among \xcorrPairs{} adjacent pairs, the cross-correlation peak is at a positive lag (upstream sensor reacts after downstream) for \xcorrAllPos\% of pairs overall and \xcorrPeakPos\% at peak hours, versus \xcorrPeakNeg\% negative at peak hours.
+This supports spatial dependence clearly and upstream-moving propagation only modestly.
+The test period has a higher outage rate (\missingTest\%) than training (\missingTrain\%).
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{02_daily_profile.pdf}
+\caption{Mean speed by time of day (band: IQR across sensors); shaded regions are the peak windows.}\label{fig:eda}
+\end{figure}
+
+\section{Problem Formulation}
+Let $x_t\in\mathbb{R}^{N}$ be the speeds at step $t$ and $m_t\in\{0,1\}^N$ the observation mask.
+Given history $X_{t-H+1:t}$ ($H=12$, one hour) the task is to predict $y_{t+h}$ for $h=1..F$ ($F=12$).
+Metrics are masked MAE, RMSE and MAPE in mph, e.g.\ $\mathrm{MAE}=\sum m|y-\hat y|/\sum m$.
+MAPE uses only targets of at least 1~mph.
+
+\section{Feature Engineering}
+For each (sensor, anchor time) we use: 12 lagged speeds; rolling mean/std/min/max over 3, 6, 12 steps; first differences; missing flags and counts; cyclic time-of-day and day-of-week encodings (so 23:55 and 00:00 are close), weekend and holiday flags; for pooled models also sensor id (categorical), latitude, longitude and in/out-degree.
+XGB-spatial adds adjacency-weighted neighbour speeds (upstream and downstream separately, lags 0--2), 2-hop means, and the difference between own and neighbour speed.
+Inputs are imputed (forward fill up to 30 minutes, then train-only time-of-day means) and flagged.
+The daily lag $t-288$ lies outside the history window and is kept off in the main comparison.
+
+\section{Methods}
+\textbf{Baselines.} Persistence, historical average (per day-of-week and time-of-day, train only), seasonal naive (same time yesterday).
+\textbf{XGBoost.} Additive trees with a second-order objective and regularisation $\gamma T+\tfrac12\lambda\|w\|^2$ \cite{chen2016xgboost}; Optuna chooses the loss (absolute error was selected) and tree parameters on the validation split.
+\emph{Per-segment}: one model per sensor and horizon (15, 30, 60~min); \emph{pooled}: one model per horizon across sensors.
+\textbf{Random Forest.} Bagged deep trees with feature subsampling \cite{breiman2001rf}, natively multi-output (one forest predicts all 12 horizons).
+\textbf{XGB-spatial.} The pooled model plus the neighbour features above.
+
+\section{Experimental Setup}
+Splits are chronological by timestamp: \splitTrainStart--\splitTrainEnd{} train, \splitValStart--\splitValEnd{} validation, \splitTestStart--\splitTestEnd{} test.
+Windows are built inside each split so no input or target crosses a boundary.
+Scalers, imputation means, the historical-average table and all hyperparameters use train (or validation for tuning) only.
+Tuning budget: 15 Optuna trials per XGBoost variant and 6 for the forest (reduced to suit a laptop); pooled models are trained on a random 25\% of training rows and the forest on 10\%, which likely understates their accuracy.
+Models are retrained on train only for test evaluation.
+Significance uses the Diebold--Mariano test \cite{diebold1995comparing} with a Newey--West long-run variance \cite{newey1987simple} and the small-sample correction of \cite{harvey1997testing}, and day-block bootstrap intervals.
+
+\section{Results}
+Table~\ref{tab:main} gives test errors; Fig.~\ref{fig:horizon} plots error versus horizon.
+All learned models beat persistence at 15 minutes (\maePersistenceFifteen{} mph); the historical average is flat across horizons (\maeHistoricalAverageFifteen{} mph) because it ignores the current state.
+XGB-spatial is best at 15 and 30 minutes (\maeXgbSpatialFifteen{} and \maeXgbSpatialThirty{} mph) while per-segment XGBoost is best at 60 minutes (\maeXgbPerSegmentSixty{} mph vs.\ \maeXgbSpatialSixty{}); the forest is weakest of the ML models (\maeRfMultioutputFifteen{}/\maeRfMultioutputThirty{}/\maeRfMultioutputSixty{} mph).
+No result violates the sanity bound for leakage (MAE at 60 minutes below about 3.0 mph).
+
+\input{../tables/main_table.tex}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{error_vs_horizon.pdf}
+\caption{Test MAE versus horizon for baselines and Phase 1 models.}\label{fig:horizon}
+\end{figure}
+
+\textbf{Feature importance.} TreeSHAP on 5,000 test rows shows that short-window averages and the latest speed dominate at 15 minutes, while sensor identity and time of day gain weight at 60 minutes; neighbour speeds appear in the top features of XGB-spatial but never dominate.
+
+\textbf{Gap analysis.} Fig.~\ref{fig:gap} shows MAE(pooled)$-$MAE(spatial) by horizon and slice.
+At 15 minutes the spatial features reduce MAE by \gapAllFifteen{} mph overall (95\% CI \gapAllFifteenLo--\gapAllFifteenHi), by \gapPeakFifteen{} mph at peak versus \gapOffpeakFifteen{} off-peak, and by \gapCongestedFifteen{} mph in congested states.
+At 60 minutes the gains are \gapAllSixty{} (all), \gapPeakSixty{} (peak), \gapOffpeakSixty{} (off-peak) and \gapCongestedSixty{} (congested) mph.
+The benefit therefore concentrates in peaks and congestion, as the propagation hypothesis predicts, but it does not increase with horizon.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{gap_analysis.pdf}
+\caption{Gap analysis with paired block-bootstrap 95\% intervals (positive: spatial features help).}\label{fig:gap}
+\end{figure}
+
+\section{Discussion and Limitations}
+Hand-made neighbour features capture part of the spatial signal cheaply; whether a learned graph model captures more is the Phase 2 question.
+Limitations: one city and season; speed-only data; a fixed distance-based graph; reduced tuning and subsampled training rows; MAPE is unstable at low speeds; the test period has more outages than training.
+
+\section{Conclusion and Phase 2 Plan}
+Segment-level ML is a strong baseline and neighbour information helps modestly, mainly in congestion.
+Phase 2 adds a spatio-temporal graph attention network, a no-graph deep ablation, a residual hybrid with leakage-safe out-of-fold base forecasts, ablations, maps and a simulated control experiment.
+
+\bibliographystyle{IEEEtran}
+\bibliography{../refs}
+\end{document}

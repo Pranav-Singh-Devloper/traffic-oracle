@@ -1,1 +1,13 @@
 model_a,model_b,horizon,dm_stat,p_value,n_seed_pairs
+xgb_spatial,xgb_global,3,-14.424565992842078,0.0,1
+xgb_spatial,xgb_global,6,-11.545812241121547,0.0,1
+xgb_spatial,xgb_global,12,-6.8874505317386365,6.243672245886955e-12,1
+xgb_global,xgb_per_segment,3,3.7865989222894054,0.00015417491289015928,1
+xgb_global,xgb_per_segment,6,5.341235032911008,9.562092739834327e-08,1
+xgb_global,xgb_per_segment,12,6.2865247738323315,3.4688008021532823e-10,1
+xgb_spatial,xgb_per_segment,3,-6.305236218034266,3.076945365165784e-10,1
+xgb_spatial,xgb_per_segment,6,-1.6826187188046442,0.09249956353079769,1
+xgb_spatial,xgb_per_segment,12,2.973832756458709,0.002952442145748968,1
+xgb_global,persistence,3,-50.355848912763605,0.0,1
+xgb_global,persistence,6,-34.815497297470216,0.0,1
+xgb_global,persistence,12,-22.959734816942515,0.0,1

@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from traffic.evaluation.report_numbers import write_numbers
 from traffic.evaluation.report_tables import insert_readme_block, to_latex, to_markdown
 
 MET, TAB = Path("results/metrics"), Path("report/tables")
@@ -26,12 +27,15 @@ def main() -> None:
     wide = mt.pivot(index="model", columns="horizon_min", values=["MAE", "RMSE", "MAPE"])
     wide.columns = [f"{m}@{h}min" for m, h in wide.columns]
     wide = wide.reset_index()
+    # LaTeX table: MAE and RMSE only (MAPE stays in the CSV / README) so it fits one column.
+    tex_wide = wide[["model"] + [c for c in wide.columns if c.startswith(("MAE", "RMSE"))]].copy()
+    tex_wide.columns = [c.replace("min", "") for c in tex_wide.columns]
     (TAB / "main_table.tex").write_text(
         to_latex(
-            wide,
-            "Test-set error by model and horizon (mph; MAPE in \\%).",
+            tex_wide,
+            "Test-set error (mph) by model and horizon (minutes).",
             "tab:main",
-            bold_min=[c for c in wide.columns if c != "model"],
+            bold_min=[c for c in tex_wide.columns if c != "model"],
         )
     )
     (TAB / "main_table.md").write_text(to_markdown(wide))
@@ -46,7 +50,17 @@ def main() -> None:
         )
     readme = Path("README.md")
     insert_readme_block(readme, md)
-    print("wrote tables and updated README")
+    n = write_numbers(MET, TAB / "numbers.tex")
+    import shutil
+
+    Path("report/figures").mkdir(parents=True, exist_ok=True)
+    for src in list(Path("results/figures").rglob("*.pdf")) + list(
+        Path("results/figures").rglob("*.png")
+    ):
+        if "training" in src.parts:
+            continue
+        shutil.copy(src, Path("report/figures") / src.name)
+    print(f"wrote tables, {n} number macros, figures; updated README")
 
 
 if __name__ == "__main__":
