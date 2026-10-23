@@ -98,6 +98,7 @@ def main() -> None:
     ap.add_argument("--model", required=True, choices=list(NAMES))
     ap.add_argument("--debug", action="store_true")
     ap.add_argument("--tune", action="store_true")
+    ap.add_argument("--daily-lag", action="store_true", help="add lag_288 (separate experiment)")
     ap.add_argument("--no-tuned", action="store_true", help="ignore configs/ml/<name>.best.yaml")
     args = ap.parse_args()
     name = NAMES[args.model]
@@ -106,6 +107,10 @@ def main() -> None:
     if best.exists() and not args.no_tuned and not args.tune:
         cfg["model"]["params"].update(yaml.safe_load(best.read_text())["model"]["params"])
         print("using tuned params from", best)
+    out_name = name
+    if args.daily_lag:
+        cfg["use_daily_lag"] = True
+        out_name = name + "_daily"
     if args.debug:
         cfg["model"]["params"] = {**cfg["model"]["params"], "n_estimators": 20}
         if "n_estimators" in cfg["model"]["params"] and name == "rf_multioutput":
@@ -138,7 +143,7 @@ def main() -> None:
     w = p.windows["test"]
     y, m = w.targets()
     res = Path(cfg["paths"]["results"]) / ("debug" if args.debug else "")
-    out = res / "predictions" / f"{name}.npz"
+    out = res / "predictions" / f"{out_name}.npz"
     save_predictions(
         out,
         pred,

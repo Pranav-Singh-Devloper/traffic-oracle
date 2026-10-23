@@ -57,7 +57,10 @@ def main() -> None:
     head = agg[agg.horizon.isin(HEADLINE)]
     w = wide(head)
     w["horizon_min"] = w["horizon"] * cfg["interval_minutes"]
-    main_t = w[w.slice == "all"].drop(columns="slice")
+    main_all = w[w.slice == "all"].drop(columns="slice")
+    daily = main_all[main_all.model.str.endswith("_daily")]
+    daily.to_csv(met / "daily_lag_experiment.csv", index=False)  # separate experiment (SPEC 7.2)
+    main_t = main_all[~main_all.model.str.endswith("_daily")]
     main_t.to_csv(met / "main_table.csv", index=False)
     w[w.slice.isin(["peak", "peak_am", "peak_pm", "offpeak_weekday", "weekend"])].to_csv(
         met / "peak_offpeak.csv", index=False

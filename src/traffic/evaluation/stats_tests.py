@@ -84,3 +84,29 @@ def day_blocks(
     cnt = m.sum(1)
     nb = codes.max() + 1
     return np.bincount(codes, err, nb), np.bincount(codes, cnt, nb).astype(float)
+
+
+def paired_block_bootstrap(
+    e1: np.ndarray,
+    e2: np.ndarray,
+    count: np.ndarray,
+    n_boot: int = 1000,
+    alpha: float = 0.05,
+    seed: int = 42,
+) -> tuple[float, float, float]:
+    """CI for MAE(model 1) - MAE(model 2) resampling days jointly (paired).
+
+    ``e1``/``e2`` are per-day |error| sums, ``count`` the per-day number of observations.
+    Returns (point estimate, lo, hi). A CI excluding 0 means a consistent difference.
+    """
+    rng = np.random.default_rng(seed)
+    b = len(count)
+    idx = rng.integers(0, b, size=(n_boot, b))
+    tot = np.maximum(count[idx].sum(1), 1)
+    diff = (e1[idx].sum(1) - e2[idx].sum(1)) / tot
+    point = (e1.sum() - e2.sum()) / max(count.sum(), 1)
+    return (
+        float(point),
+        float(np.quantile(diff, alpha / 2)),
+        float(np.quantile(diff, 1 - alpha / 2)),
+    )

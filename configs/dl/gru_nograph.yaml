@@ -1,3 +1,22 @@
 inherits: base.yaml
+graph: {variant: bidirectional}     # forward | backward | bidirectional | identity | random | knn_geo
 model:
   name: gru_nograph
+  d: 64
+  layers: 2
+  dropout: 0.1
+
+  node_embedding: true
+  use_time_features: true
+train:
+  lr: 0.001
+  weight_decay: 0.0001
+  batch_size: 64
+  max_epochs: 100
+  patience: 15
+  clip: 5.0
+  scheduler: plateau       # plateau | cosine
+  loss: mae
+  noise_std: 0.0
+  sensor_mask_p: 0.0
+seeds: [0, 1, 2]
