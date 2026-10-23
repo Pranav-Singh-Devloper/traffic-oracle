@@ -1,0 +1,83 @@
+{
+  "missingness": {
+    "missing_rate_overall": 0.08109350825676487,
+    "sensor_missing_rate_max": 0.2010387488328665,
+    "sensor_missing_rate_median": 0.06973622782446312,
+    "sensors_never_missing": 0,
+    "whole_network_outage_timestamps": 2148
+  },
+  "daily_profile": {
+    "weekday_min_mean_speed": 45.26172325000265,
+    "weekday_min_speed_hour": 17.5,
+    "weekend_min_mean_speed": 56.80378230166359,
+    "weekend_min_speed_hour": 13.5
+  },
+  "heatmap": {
+    "heatmap_min_mph": 42.45154080134256,
+    "heatmap_max_mph": 65.66973225614335
+  },
+  "distribution": {
+    "mean_speed": 58.45972532036905,
+    "share_below_threshold_all": 0.10857904323391832,
+    "share_below_threshold_peak": 0.2691283129440973,
+    "share_below_threshold_offpeak": 0.05798766790700396,
+    "mean_speed_peak": 51.546031410689984,
+    "mean_speed_offpeak": 60.638329334646926
+  },
+  "acf": {
+    "acf_lag288_sensor183": 0.0344475038983239,
+    "acf_lag288_sensor75": 0.3997577719619874,
+    "acf_lag288_sensor163": 0.4547352178631422
+  },
+  "corr_vs_hops": {
+    "median_corr_1_hops": 0.4456454019600599,
+    "median_corr_2_hops": 0.2450062634880849,
+    "median_corr_3_hops": 0.19373308405438244,
+    "median_corr_4_hops": 0.1788041044127917,
+    "median_corr_5_hops": 0.16444145521737286,
+    "median_corr_6_hops": 0.15048238088767596,
+    "median_corr_7_hops": 0.14028339852514907,
+    "median_corr_8_hops": 0.14428396247352615,
+    "median_corr_unreachable": 0.19552136768996226
+  },
+  "xcorr": {
+    "xcorr_pairs": 1228,
+    "xcorr_share_peak_lag_positive": 0.38436482084690554,
+    "xcorr_share_peak_lag_zero": 0.32003257328990226,
+    "xcorr_share_peak_lag_negative": 0.2956026058631922,
+    "xcorr_median_peak_lag": 0.0,
+    "xcorr_peakhours_share_positive": 0.497557003257329,
+    "xcorr_peakhours_share_zero": 0.12296416938110749,
+    "xcorr_peakhours_share_negative": 0.3794788273615635
+  },
+  "sensor_map": {
+    "sensors_mean_speed_below_55": 47
+  },
+  "congestion_map": {
+    "peak_congestion_share_max": 0.9994659546061415,
+    "peak_congestion_share_median": 0.2651475919212843,
+    "sensors_congested_over_20pct_of_peak": 119
+  },
+  "splits": {
+    "split_stats": {
+      "train": {
+        "weekday_share": 0.7118799499791579,
+        "peak_share": 0.2366819508128387,
+        "missing_rate": 0.07132198802641197,
+        "mean_speed": 58.58425763745299
+      },
+      "val": {
+        "weekday_share": 0.6638459293843011,
+        "peak_share": 0.22001750802451123,
+        "missing_rate": 0.06962188587643733,
+        "mean_speed": 58.8994273563011
+      },
+      "test": {
+        "weekday_share": 0.7479212253829322,
+        "peak_share": 0.25207877461706785,
+        "missing_rate": 0.12102523987216214,
+        "mean_speed": 57.766589324574326
+      }
+    }
+  }
+}

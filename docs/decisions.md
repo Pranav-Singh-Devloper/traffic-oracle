@@ -6,7 +6,7 @@ Template: **Context / Decision / Consequences / Status**
 - **Context:** `DL_AML_Project/` is nested inside the parent git repo `folder_2/`. CI and per-member history need their own repo.
 - **Decision:** Recommended: `git init` here and push to a new GitHub repo.
 - **Consequences:** Pending the owner's go-ahead; nothing has been initialised.
-- **Status:** Proposed.
+- **Status:** Accepted (git init done locally; no remote yet).
 
 ## ADR-002: Graph message direction
 - **Context:** DCRNN's `W[i, j]` is built from the road distance from sensor i to sensor j. The spec needs one explicit convention.
