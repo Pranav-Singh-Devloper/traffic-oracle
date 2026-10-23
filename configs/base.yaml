@@ -1,0 +1,18 @@
+seed: 42
+interval_minutes: 5
+history_steps: 12
+horizon_steps: 12
+report_horizons: [3, 6, 12]
+split: {train: 0.7, val: 0.1, test: 0.2}
+missing_value: 0.0
+peak_windows:
+  am: ["06:00", "10:00"]
+  pm: ["15:00", "19:00"]
+congestion_threshold_mph: 40
+paths: {raw: data/raw, processed: data/processed, results: results}
+input_imputation: ffill_tod_mean   # ffill_tod_mean | zero_mask
+max_ffill_steps: 6
+scaler: global                     # global | per_sensor
+split_protocol: strict             # strict | dcrnn
+use_daily_lag: false
+debug: {n_sensors: 10, n_days: 2, epochs: 1}

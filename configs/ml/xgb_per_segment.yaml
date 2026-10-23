@@ -1,0 +1,3 @@
+inherits: base.yaml
+model:
+  name: xgb_per_segment
