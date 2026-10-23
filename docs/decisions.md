@@ -23,3 +23,11 @@ Template: **Context / Decision / Consequences / Status**
 - **Context:** `pd.read_hdf` raises `TypeError: a bytes-like object is required, not 'str'` on this 2019 file with pandas 3.1 / PyTables 3.11.
 - **Decision:** `load_speed` tries `pd.read_hdf` first and falls back to reading the plain fixed-format layout (`axis0`, `axis1` int64 ns, `block0_values`) with PyTables. Same data and index; asserted by the integrity checks.
 - **Status:** Accepted.
+
+## ADR-005: Metric and test conventions
+- **MAPE:** computed only where the target is >= 1 mph (and observed). Tiny targets make MAPE explode.
+- **Peak slices:** weekday only, judged on the target timestamp; weekend is its own slice. Public holidays are not special-cased.
+- **Diebold-Mariano:** loss = absolute error averaged over sensors observed in both models, one series per horizon over test anchors (stride 1). Long-run variance uses a Bartlett kernel with L = max(h-1, ceil(T^(1/3))) lags (more conservative than the h-1 rectangular window, which can go negative), Harvey-Leybourne-Newbold correction, t(T-1) reference. For multi-seed models, DM is computed per seed pair; we report the median statistic and the largest p-value.
+- **Bootstrap:** resamples whole days of target timestamps; CI shown for the first seed of each model.
+- **Seasonal naive** falls back to the historical average when the day-earlier value is missing (reported in prediction metadata).
+- **Status:** Accepted.

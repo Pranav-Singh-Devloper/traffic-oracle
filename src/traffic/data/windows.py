@@ -61,6 +61,12 @@ class Windows:
         off = np.arange(1, self.F + 1)
         return self.index.values[self.anchors[:, None] + off]
 
+    def targets(self) -> tuple[np.ndarray, np.ndarray]:
+        """Y [S, F, N] mph and mask [S, F, N] for all windows (cheap: no inputs)."""
+        foff = np.arange(1, self.F + 1)
+        a = self.anchors[:, None] + foff
+        return self.y[a], self.ymask[a]
+
     def materialize(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """X [S,H,N,C], Y [S,F,N], M [S,F,N] (uses a lot of memory on the full set)."""
         hoff = np.arange(-self.H + 1, 1)
