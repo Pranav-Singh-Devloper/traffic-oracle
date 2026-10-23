@@ -24,6 +24,7 @@ class Prepared:
     scaler: MaskedStandardScaler
     tod_mean: np.ndarray
     chan: np.ndarray
+    x_in: np.ndarray  # [T, N] unscaled input speed after imputation (mph)
     windows: dict[str, Windows]
 
 
@@ -66,4 +67,4 @@ def prepare(cfg: dict, raw_dir: str = "data/raw", debug: bool = False) -> Prepar
             k: Windows(chan, speed, mask, index, allw.anchors[s], H, F)
             for k, s in ss.as_dict().items()
         }
-    return Prepared(d, speed, mask, index, split, scaler, tm, chan, windows)
+    return Prepared(d, speed, mask, index, split, scaler, tm, chan, x_in, windows)

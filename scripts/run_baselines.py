@@ -26,7 +26,7 @@ def main() -> None:
     y, m = w.targets()
     ts = w.target_ts()
     h, f = cfg["history_steps"], cfg["horizon_steps"]
-    out = Path(cfg["paths"]["results"]) / "predictions"
+    out = Path(cfg["paths"]["results"]) / ("debug" if args.debug else "") / "predictions"
     ids = p.data.sensor_ids
     meta = {"protocol": cfg["split_protocol"], "H": h, "split": "test"}
 

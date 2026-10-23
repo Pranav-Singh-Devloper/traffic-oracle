@@ -1,3 +1,11 @@
 inherits: base.yaml
 model:
   name: rf_multioutput
+  row_subsample: 0.2          # share of train rows (RF memory/time); documented in ADR-006
+  params:
+    n_estimators: 100
+    max_depth: 24
+    max_features: 0.33
+    min_samples_leaf: 5
+    max_samples: 0.5
+  tuning: {n_trials: 12, train_rows: 100000, val_rows: 50000}

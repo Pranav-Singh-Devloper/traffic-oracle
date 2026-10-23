@@ -1,3 +1,16 @@
 inherits: base.yaml
 model:
   name: xgb_spatial
+  horizons: all   # all = 1..12
+  row_subsample: 0.5         # random share of train rows (global models)
+  params:
+    max_depth: 8
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 5
+    reg_lambda: 1.0
+    gamma: 0.0
+    n_estimators: 600          # upper bound; early stopping on val
+  early_stopping_rounds: 30
+  tuning: {n_trials: 40, tune_horizon: 6, train_rows: 400000, val_rows: 200000}

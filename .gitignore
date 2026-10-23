@@ -20,3 +20,5 @@ __pycache__/
 *.fdb_latexmk
 *.synctex.gz
 report/**/*.pdf
+results/debug/
+checkpoints*/
