@@ -46,7 +46,7 @@ class BatchIterator:
     """Vectorised batches straight from the window arrays (much faster than a DataLoader).
 
     Shuffling is only used for the train split; val/test keep chronological order.
-    Yields (X [B,H,N,C], Y [B,F,N] mph, M [B,F,N] bool, anchor positions).
+    Yields (X [B,H,N,C], Y [B,F,N] mph, M [B,F,N] bool, aux [B,F,N] mph or positions).
     """
 
     def __init__(
@@ -56,8 +56,10 @@ class BatchIterator:
         shuffle: bool = False,
         seed: int = 0,
         channels: list[int] | None = None,
+        aux: np.ndarray | None = None,
     ):
         self.w, self.bs, self.shuffle, self.channels = w, batch_size, shuffle, channels
+        self.aux = aux  # optional [S, F, N] array aligned with w.anchors (hybrid base predictions)
         self.rng = np.random.default_rng(seed)
         self.hoff = np.arange(-w.H + 1, 1)
         self.foff = np.arange(1, w.F + 1)
@@ -78,5 +80,5 @@ class BatchIterator:
                 torch.from_numpy(np.ascontiguousarray(x)),
                 torch.from_numpy(self.w.y[a[:, None] + self.foff].astype(np.float32)),
                 torch.from_numpy(self.w.ymask[a[:, None] + self.foff]),
-                pos,
+                pos if self.aux is None else torch.from_numpy(self.aux[pos].astype(np.float32)),
             )

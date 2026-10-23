@@ -61,6 +61,18 @@ def main() -> None:
         hist = tr.fit(p.windows["train"], p.windows["val"])
         secs = time.time() - t0
         pred = tr.predict(p.windows["test"])
+        wv = p.windows["val"]
+        yv, mv = wv.targets()
+        if args.out == "main":
+            save_predictions(
+                root / "predictions_val" / f"{name}_seed{seed}.npz",
+                tr.predict(wv),
+                yv,
+                mv,
+                wv.target_ts(),
+                p.data.sensor_ids,
+                {"model": name, "split": "val"},
+            )
         w = p.windows["test"]
         y, m = w.targets()
         save_predictions(

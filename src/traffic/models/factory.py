@@ -8,6 +8,7 @@ import torch
 from traffic.data.graph import get_adjacency
 from traffic.data.windows import CHANNELS
 from traffic.models.gru_nograph import GRUNoGraph
+from traffic.models.hybrid import ResidualHybrid
 from traffic.models.stgat import STGAT
 
 
@@ -33,11 +34,11 @@ def build_model(cfg: dict, w: np.ndarray, locations, n_nodes: int) -> torch.nn.M
             mc.get("dropout", 0.1),
             mc.get("node_embedding", True),
         )
-    if name == "stgat":
+    if name in ("stgat", "hybrid_residual"):
         adj = get_adjacency(
             cfg.get("graph", {}).get("variant", "bidirectional"), w, locations, seed=cfg["seed"]
         )
-        return STGAT(
+        net = STGAT(
             torch.as_tensor(adj),
             c,
             horizon,
@@ -52,5 +53,7 @@ def build_model(cfg: dict, w: np.ndarray, locations, n_nodes: int) -> torch.nn.M
             mc.get("edge_bias", False),
             mc.get("readout", "last"),
             mc.get("dropedge", 0.0),
+            horizon if name == "hybrid_residual" else 0,
         )
+        return ResidualHybrid(net) if name == "hybrid_residual" else net
     raise ValueError(name)

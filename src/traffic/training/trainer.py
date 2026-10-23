@@ -56,43 +56,60 @@ class Trainer:
         return x
 
     @torch.no_grad()
-    def predict(self, w: Windows, batch_size: int = 128) -> np.ndarray:
+    def predict(
+        self, w: Windows, batch_size: int = 128, aux: np.ndarray | None = None
+    ) -> np.ndarray:
         """[S, F, N] predictions in mph."""
         self.model.eval()
         out = []
-        for x, _, _, _ in BatchIterator(w, batch_size, False, 0, self.channels):
-            y = self.model(x.to(self.device))
+        for x, _, _, a in BatchIterator(w, batch_size, False, 0, self.channels, aux):
+            y = self._forward(x.to(self.device), a if aux is not None else None)
             out.append((y * self.std + self.mean).cpu().numpy())
         return np.concatenate(out).astype(np.float32)
 
-    def val_mae(self, w: Windows) -> float:
-        pred = self.predict(w)
+    def _forward(self, x: torch.Tensor, aux: torch.Tensor | None) -> torch.Tensor:
+        """Plain models take x; hybrids also take the scaled base prediction."""
+        if aux is None:
+            return self.model(x)
+        return self.model(x, self._scale(aux.to(self.device)))
+
+    def val_mae(self, w: Windows, aux: np.ndarray | None = None) -> float:
+        pred = self.predict(w, aux=aux)
         y, m = w.targets()
         return float(np.abs(pred - y)[m].mean())
 
-    def fit(self, train_w: Windows, val_w: Windows, log=print) -> pd.DataFrame:
+    def fit(
+        self,
+        train_w: Windows,
+        val_w: Windows,
+        log=print,
+        aux_train: np.ndarray | None = None,
+        aux_val: np.ndarray | None = None,
+    ) -> pd.DataFrame:
         t = self.t
         opt = torch.optim.Adam(self.model.parameters(), lr=t["lr"], weight_decay=t["weight_decay"])
         if t.get("scheduler", "plateau") == "cosine":
             sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=t["max_epochs"])
         else:
             sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, factor=0.5, patience=5)
-        it = BatchIterator(train_w, t["batch_size"], True, self.seed, self.channels)
+        it = BatchIterator(train_w, t["batch_size"], True, self.seed, self.channels, aux_train)
         best, best_state, bad, rows = float("inf"), None, 0, []
         for ep in range(1, t["max_epochs"] + 1):
             self.model.train()
             t0, tot, nb = time.time(), 0.0, 0
-            for x, y, m, _ in it:
+            for x, y, m, a in it:
                 x, y, m = x.to(self.device), y.to(self.device), m.to(self.device)
                 x = self._augment(x)
-                loss = self.loss_fn(self.model(x), self._scale(y), m)
+                loss = self.loss_fn(
+                    self._forward(x, a if aux_train is not None else None), self._scale(y), m
+                )
                 opt.zero_grad(set_to_none=True)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), t["clip"])
                 opt.step()
                 tot += float(loss.detach())
                 nb += 1
-            v = self.val_mae(val_w)
+            v = self.val_mae(val_w, aux_val)
             if t.get("scheduler", "plateau") == "cosine":
                 sched.step()
             else:

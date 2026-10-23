@@ -92,6 +92,7 @@ class STGAT(nn.Module):
         edge_bias: bool = False,
         readout: str = "last",
         dropedge: float = 0.0,
+        base_horizon: int = 0,
     ):
         super().__init__()
         n = adj.shape[0]
@@ -115,7 +116,7 @@ class STGAT(nn.Module):
         )
         self.pool = nn.Linear(d, 1) if readout == "attn" else None
         self.decoder = nn.Sequential(
-            nn.Linear(d, d), nn.ReLU(), nn.Dropout(dropout), nn.Linear(d, horizon)
+            nn.Linear(d + base_horizon, d), nn.ReLU(), nn.Dropout(dropout), nn.Linear(d, horizon)
         )
 
     def _adj(self) -> torch.Tensor:
@@ -125,8 +126,11 @@ class STGAT(nn.Module):
             return self.adj * keep
         return self.adj
 
-    def forward(self, x: torch.Tensor, return_attn: bool = False):
-        """x: [B, H, N, C] -> [B, F, N] in scaled units (and last-block attention if asked)."""
+    def forward(self, x: torch.Tensor, base: torch.Tensor | None = None, return_attn: bool = False):
+        """x: [B, H, N, C] -> [B, F, N] in scaled units (and last-block attention if asked).
+
+        ``base`` [B, F, N] (optional) is a scaled base forecast given to the decoder (hybrid).
+        """
         z = self.embed(x)
         if self.node_emb is not None:
             z = z + self.node_emb[None, None]
@@ -142,5 +146,7 @@ class STGAT(nn.Module):
             r = (w.unsqueeze(-1) * z).sum(1)
         else:
             r = z[:, -1]
+        if base is not None:
+            r = torch.cat([r, base.permute(0, 2, 1)], dim=-1)
         y = self.decoder(r).permute(0, 2, 1)  # [B, F, N]
         return (y, attn) if return_attn else y

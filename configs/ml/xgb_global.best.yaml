@@ -1,0 +1,13 @@
+inherits: base.yaml
+model:
+  name: xgb_global
+  params:
+    n_estimators: 400
+    max_depth: 10
+    learning_rate: 0.040191102486937365
+    subsample: 0.5434967463308671
+    colsample_bytree: 0.9238068381375056
+    min_child_weight: 6
+    reg_lambda: 5.2222288366640095
+    gamma: 3.7865010784118542
+    objective: reg:absoluteerror
