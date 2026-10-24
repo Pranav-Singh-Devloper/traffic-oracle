@@ -22,3 +22,6 @@ Team T042. Also answer `shared_questions.md` (10 questions everyone must know). 
 18. **How does the trainer keep validation consistent with the metric?** Training uses masked MAE in scaled space; validation inverse-transforms to mph and early-stops on masked MAE in mph.
 19. **Why MPS instead of CPU, and what are the risks?** MPS was about 7x faster than CPU for STGAT; risks are op coverage and nondeterminism, so we fix seeds and report 3 seeds.
 20. **What did the three-seed comparison with the GRU show?** Equal at 15 min, slightly better at 30 (not significant), clearly better at 60 min (DM significant); see Table of main results.
+
+## Verification log
+- 2026-10-24 14:15: Pranav Singh ran the tests for their modules (tests/test_gat_layer.py, tests/test_stgat_shapes.py): 10 passed in 2.78s.
