@@ -23,6 +23,14 @@ make data        # downloads the dataset (needed to run anything)
 ```
 Pranav adds the other four as **collaborators** (Settings -> Collaborators): kunaldevsahu, HimanshuPal29, kanchan97-cp, VaibhavSingh50. Each must accept the emailed invitation.
 
+## Fastest path: one command
+After the one-time setup, run this on **your own machine** (it refuses to run if your git email is wrong):
+```bash
+python scripts/first_commit.py --as <you>     # pranav_singh | kunal | himanshu | kanchan | vaibhav
+git push -u origin <you>/first-verification   # then open a pull request
+```
+It runs your modules' tests, records the real result in `docs/viva/<you>.md`, and commits with your identity.
+
 ## See your files
 ```bash
 python scripts/owners.py mine --as <you>     # pranav_singh | kunal | himanshu | kanchan | vaibhav
