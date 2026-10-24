@@ -11,12 +11,24 @@ Nothing is faked: if tests fail or the identity is wrong, it stops.
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
 
-import yaml
+_ROOT = Path(__file__).resolve().parents[1]
+for _rel in (".venv/bin/python", ".venv/Scripts/python.exe"):  # re-launch inside the project venv
+    _py = _ROOT / _rel
+    if (
+        _py.exists()
+        and Path(sys.executable).resolve() != _py.resolve()
+        and not os.environ.get("_FC")
+    ):
+        os.environ["_FC"] = "1"
+        os.execv(str(_py), [str(_py), *sys.argv])
+
+import yaml  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 CFG = yaml.safe_load((ROOT / "OWNERS.yaml").read_text())["members"]
@@ -39,6 +51,14 @@ TESTS = {
 }
 
 
+def project_python() -> str:
+    """Prefer the repo's .venv so it works even when another Python (e.g. conda base) is active."""
+    for rel in (".venv/bin/python", ".venv/Scripts/python.exe"):
+        if (ROOT / rel).exists():
+            return str(ROOT / rel)
+    return sys.executable
+
+
 def run(*cmd: str) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
 
@@ -56,7 +76,16 @@ def main() -> int:
             f"Fix: git config user.email {m['emails'][0]}"
         )
     print(f"identity OK: {name} <{email}> for GitHub {m['github']}")
-    t = run(sys.executable, "-m", "pytest", "-q", *TESTS[a.who])
+    py = project_python()
+    if run(py, "-c", "import traffic, pytest").returncode != 0:
+        sys.exit(
+            "STOP: the project is not installed for this Python.\n"
+            "Do the one-time setup first:\n"
+            "  uv venv --python 3.11 .venv && source .venv/bin/activate\n"
+            '  uv pip install -e ".[dev]"\n'
+            "(or: python -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]')"
+        )
+    t = run(py, "-m", "pytest", "-q", *TESTS[a.who])
     last = t.stdout.strip().splitlines()[-1] if t.stdout.strip() else "no output"
     print("tests:", last)
     if t.returncode != 0:
