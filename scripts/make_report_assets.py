@@ -50,6 +50,26 @@ def main() -> None:
         )
     readme = Path("README.md")
     insert_readme_block(readme, md)
+    ab_path = MET / "ablations.csv"
+    if ab_path.exists():
+        ab = pd.read_csv(ab_path)
+        ab = ab[ab.metric == "MAE"].pivot_table(
+            index=["ablation", "variant"], columns="horizon_min", values="mean"
+        )
+        ref = ab.loc[("A0", "default")]
+        t = pd.DataFrame({"setting": [f"{a} {v}".replace("_", " ") for a, v in ab.index]})
+        for h in (15, 30, 60):
+            t[f"MAE@{h}"] = ab[h].to_numpy()
+        for h in (15, 30, 60):
+            t[f"d@{h}"] = (ab[h] - ref[h]).to_numpy()
+        t = t.sort_values("setting", key=lambda x: x.str.replace(r"^A(\d) ", r"A0\1 ", regex=True))
+        (TAB / "ablations.tex").write_text(
+            to_latex(
+                t,
+                "Ablations (1 seed, 12 epochs): MAE (mph) and change vs. default.",
+                "tab:abl",
+            )
+        )
     sig_path = MET / "significance.csv"
     if sig_path.exists():
         sg = pd.read_csv(sig_path)

@@ -70,7 +70,15 @@ The learned gate puts more weight on STGAT at peaks than off-peak (at 60 min: \g
 
 \section{Ablations}
 Each ablation changes one setting from the default and was run with one seed and a reduced epoch budget (the default was re-run with the same budget as reference).
-%ABLATION_TEXT
+\input{../tables/ablations.tex}
+Under this reduced budget the default is \emph{not} the best configuration, and the ablations do not demonstrate a benefit of the graph: the identity graph (A1, no neighbours) gives \ablAOneIdentityFifteen/\ablAOneIdentityThirty/\ablAOneIdentitySixty{} mph versus \ablAZeroDefaultFifteen/\ablAZeroDefaultThirty/\ablAZeroDefaultSixty{} for the default at 15/30/60 minutes.
+A random graph with the same number of edges (A2) is worse than both (\ablATwoRandomSixty{} mph at 60 minutes), so wrong edges hurt while correct edges are about neutral at this budget; this is weak support for the claim that topology matters.
+The only large effects are removing the node embedding (A7) and the calendar features (A8), which hurt most at 60 minutes (\ablASevenNoNodeEmbSixty{} and \ablAEightNoTimeSixty{} mph).
+Edge direction (A3), attention type (A4: GAT, GATv2, fixed weights), heads (A5), layers (A6), imputation (A9), history length (A11) and the edge bias (A12) change MAE by at most a few hundredths of a mph at 15 and 30 minutes, comparable to the seed-to-seed spread of the full runs (std \maeStgatFifteenStd{}--\maeStgatSixtyStd{} mph), so no ranking among them should be read from a single seed.
+Removing dropout or weight decay (A10) helped slightly: with only 12 epochs the model is under-trained rather than over-fitted, so these results say nothing about regularisation at full training.
+The three-seed comparison with the no-graph GRU (Table~\ref{tab:main}) is the stronger evidence that the graph helps at 60 minutes; the ablations could not confirm it with one seed and a short schedule.
+A13 (hybrid design) is the comparison of residual, gate and average rows in Table~\ref{tab:main}.
+
 
 \section{Interpretability and Maps}
 Fig.~\ref{fig:err} shows where STGAT improves on XGBoost-global at 60 minutes during peaks (blue: STGAT better); gains are clustered along specific freeway segments while a few sensors are slightly worse.

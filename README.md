@@ -1,14 +1,34 @@
-# Traffic Flow Prediction & Simulated Signal Control
+# Traffic Flow Prediction & Simulated Control on METR-LA
 
-Graph Attention Networks vs. segment-level ML on METR-LA. See [SPEC.md](SPEC.md) and the build plan in [phases/](phases/00_OVERVIEW.md).
+Graph attention networks vs. segment-level machine learning for 5-60 minute speed forecasting on the METR-LA freeway sensor network, plus a leakage-safe ML+graph hybrid and an *offline simulated* ramp-metering study. Full specification: [SPEC.md](SPEC.md); build plan: [phases/](phases/00_OVERVIEW.md); decisions: [docs/decisions.md](docs/decisions.md).
 
-Control experiments are offline simulation only; no real-world traffic control is performed or claimed.
+> Control experiments are offline simulations on a synthetic network. No live or real-world traffic control is performed or claimed.
 
-## Run
+![Error vs horizon](results/figures/error_vs_horizon_all_models.png)
+
+## Reproduce
+```bash
+uv venv --python 3.11 .venv && source .venv/bin/activate
+uv pip install -e ".[dev]"         # or: pip install -r requirements.txt
+make data      # download METR-LA + DCRNN graph files, verify, write MANIFEST.json
+make eda       # figures + docs/eda_summary.md
+make phase1    # baselines + evaluation tables
+bash scripts/run_ml_chain.sh       # tune + train the 4 ML models
+bash scripts/run_dl_chain.sh       # GRU-nograph and STGAT, 3 seeds
+bash scripts/run_phase2_chain.sh   # OOF, hybrids, evaluation, maps, control, report assets
+bash scripts/run_ablation_chain.sh # reduced-budget ablations
+make test      # unit + (if data present) end-to-end debug tests
 ```
-make data && make all
-```
-Runtimes / hardware: _filled in from docs/experiment_log.md_.
+`--debug` flags on the training scripts run a tiny CPU config. Everything auto-detects the device (CUDA, Apple MPS, CPU).
+
+## Hardware and runtimes (this run)
+MacBook with Apple M3 Pro (11 cores, 18 GB), run at low priority with 6 CPU cores / 4 torch threads and the MPS GPU. Approximate wall-clock: ML chain ~50 min; GRU-nograph ~8 min/seed; STGAT ~28 min/seed (40 epochs); OOF + hybrids ~80 min; ablations ~3-4 h. Exact timings per run are in [docs/experiment_log.md](docs/experiment_log.md). The budgets were deliberately reduced for a laptop (see ADR-006/007), so absolute numbers are not tuned to the limit.
+
+## Where things are
+- `src/traffic/` library code; `scripts/` entry points; `configs/` YAML; `tests/`
+- `results/metrics/` all CSVs (committed); `results/figures/`, `results/maps/` (interactive HTML)
+- `report/phase1`, `report/phase2` IEEE reports (numbers come from `report/tables/numbers.tex`, generated)
+- `docs/` EDA summary, theory notes (`docs/theory/`), viva prep (`docs/viva/`), ADRs
 
 ## Results
 <!-- RESULTS_START -->
@@ -43,6 +63,7 @@ Runtimes / hardware: _filled in from docs/experiment_log.md_.
 | seasonal_naive | 4.37 | 7.48 | 6.18 | 8.70 | 5.83 |
 | stgat | 3.13 | 5.19 | 4.35 | 5.98 | 3.05 |
 | xgb_global | 3.11 | 5.65 | 4.67 | 6.58 | 3.05 |
+| xgb_global_daily | 3.12 | 5.67 | 4.69 | 6.59 | 3.04 |
 | xgb_per_segment | 3.11 | 5.26 | 4.19 | 6.28 | 3.09 |
 | xgb_spatial | 3.08 | 5.54 | 4.65 | 6.38 | 3.03 |
 <!-- RESULTS_END -->

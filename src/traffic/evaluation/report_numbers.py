@@ -29,6 +29,20 @@ def camel(s: str) -> str:
     return "".join(p.capitalize() for p in s.replace("-", "_").split("_"))
 
 
+DIGITS = dict(
+    zip(
+        "0123456789",
+        ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"],
+        strict=True,
+    )
+)
+
+
+def nodigits(s: str) -> str:
+    """LaTeX control-sequence names may not contain digits."""
+    return "".join(DIGITS.get(c, c) for c in s)
+
+
 def _fmt(v, d: int = 2) -> str:
     return "--" if v is None or (isinstance(v, float) and np.isnan(v)) else f"{v:.{d}f}"
 
@@ -93,7 +107,7 @@ def build_macros(met: Path) -> dict[str, str]:
         for r in a.itertuples():
             wh = {15: "Fifteen", 30: "Thirty", 60: "Sixty"}.get(r.horizon_min)
             if wh:
-                m[f"abl{camel(r.ablation)}{camel(r.variant)}{wh}"] = _fmt(r.mean)
+                m[f"abl{nodigits(camel(r.ablation) + camel(r.variant))}{wh}"] = _fmt(r.mean)
     eda = met / "eda_stats.json"
     if eda.exists():
         s = json.loads(eda.read_text())
