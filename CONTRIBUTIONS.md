@@ -4,13 +4,13 @@
 
 Work is split in **decreasing order of difficulty and technical depth**, with workload kept deliberately even: Pranav Singh owns the hardest, most central technical core; Vaibhav the most mechanical parts, but everyone owns real code, experiments, report sections and theory notes. Everyone must still be able to explain the shared topics (split protocol, masking, adjacency, GAT equations, hybrid OOF logic, headline results) in the individual viva; see `docs/viva/`.
 
-| Rank | Member | Role |
-|---|---|---|
-| 1 | **Pranav Singh** | Technical lead: deep-learning core (GAT layer, STGAT, GRU, trainer) |
-| 2 | **Kunal** | Phase 1 machine learning and the hybrid models |
-| 3 | **Himanshu** | Evaluation and statistics framework, baselines, simulated control |
-| 4 | **Kanchan** | Data pipeline, graph, missing data, EDA, ablation runs |
-| 5 | **Vaibhav** | Scaffold/CI, maps and attention plots, README, slides, report assembly |
+| Rank | Member | GitHub | Role |
+|---|---|---|---|
+| 1 | **Pranav Singh** | [Pranav-Singh-Devloper](https://github.com/Pranav-Singh-Devloper) | Technical lead: deep-learning core (GAT layer, STGAT, GRU, trainer) |
+| 2 | **Kunal** | [kunaldevsahu](https://github.com/kunaldevsahu) | Phase 1 machine learning and the hybrid models |
+| 3 | **Himanshu** | [HimanshuPal29](https://github.com/HimanshuPal29) | Evaluation and statistics framework, baselines, simulated control |
+| 4 | **Kanchan** | [kanchan97-cp](https://github.com/kanchan97-cp) | Data pipeline, graph, missing data, EDA, ablation runs |
+| 5 | **Vaibhav** | [VaibhavSingh50](https://github.com/VaibhavSingh50) | Scaffold/CI, maps and attention plots, README, slides, report assembly |
 
 ## 1. Pranav Singh (hardest and most technical)
 - **Modules:** `models/layers/gat_dense.py` (dense + sparse GAT, equivalence with PyG), `models/stgat.py`, `models/gru_nograph.py`, `models/factory.py`, `training/trainer.py`, `training/losses.py`, `data/datasets.py` (fast batch iterator), `scripts/train_dl.py`, `scripts/run_dl_chain.sh`.

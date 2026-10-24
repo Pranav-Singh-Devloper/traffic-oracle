@@ -45,6 +45,7 @@ def main() -> int:
     ap.add_argument("message", nargs="?")
     ap.add_argument("--as", dest="who", choices=list(CFG["members"]))
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--force", action="store_true", help="skip the git-email check")
     a = ap.parse_intermixed_args()
     files = tracked()
     if a.cmd == "check":
@@ -67,6 +68,15 @@ def main() -> int:
         other = [f for f in changed if owner_of(f) != a.who]
         who = f"{git('config', 'user.name').strip()} <{git('config', 'user.email').strip()}>"
         print("identity:", who)
+        known = CFG["members"][a.who].get("emails", [])
+        if known and git("config", "user.email").strip().lower() not in [e.lower() for e in known]:
+            msg = (
+                f"git user.email is not one of {known}; GitHub would not credit this commit "
+                f"to {CFG['members'][a.who]['github']}. Fix: git config user.email <that email>"
+            )
+            if not (a.force or a.dry_run):
+                sys.exit("STOP: " + msg)
+            print("WARNING:", msg)
         print(f"will commit {len(mine)} file(s) owned by {a.who}; leave {len(other)} others alone")
         for f in mine:
             print("  +", f)

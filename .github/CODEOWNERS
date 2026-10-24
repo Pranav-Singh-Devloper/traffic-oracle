@@ -1,13 +1,51 @@
-# GitHub asks these people to review changes to their files (pull-request reviews show up in history).
-# Replace the usernames below with each member's real GitHub username, then uncomment.
-# Source of truth for ownership: OWNERS.yaml
-*                                   @Pranav-Singh-Devloper
-# /src/traffic/features/            @KUNAL_USERNAME
-# /src/traffic/models/ml_models.py  @KUNAL_USERNAME
-# /src/traffic/models/hybrid.py     @KUNAL_USERNAME
-# /src/traffic/evaluation/          @HIMANSHU_USERNAME
-# /src/traffic/control/             @HIMANSHU_USERNAME
-# /src/traffic/data/                @KANCHAN_USERNAME
-# /src/traffic/viz/                 @VAIBHAV_USERNAME
-# /README.md                        @VAIBHAV_USERNAME
-# /report/                          @VAIBHAV_USERNAME
+# GitHub requests review from these owners on pull requests. Source of truth: OWNERS.yaml
+*                                              @Pranav-Singh-Devloper
+
+/src/traffic/models/layers/                    @Pranav-Singh-Devloper
+/src/traffic/models/stgat.py                   @Pranav-Singh-Devloper
+/src/traffic/models/gru_nograph.py             @Pranav-Singh-Devloper
+/src/traffic/models/factory.py                 @Pranav-Singh-Devloper
+/src/traffic/training/trainer.py               @Pranav-Singh-Devloper
+/src/traffic/training/losses.py                @Pranav-Singh-Devloper
+/scripts/train_dl.py                           @Pranav-Singh-Devloper
+/configs/dl/                                   @Pranav-Singh-Devloper
+
+/src/traffic/features/lags.py                  @kunaldevsahu
+/src/traffic/features/spatial.py               @kunaldevsahu
+/src/traffic/features/build_tabular.py         @kunaldevsahu
+/src/traffic/models/ml_models.py               @kunaldevsahu
+/src/traffic/models/hybrid.py                  @kunaldevsahu
+/src/traffic/training/tuning.py                @kunaldevsahu
+/scripts/train_ml.py                           @kunaldevsahu
+/scripts/make_oof.py                           @kunaldevsahu
+/scripts/train_hybrid.py                       @kunaldevsahu
+/configs/ml/                                   @kunaldevsahu
+/configs/hybrid/                               @kunaldevsahu
+
+/src/traffic/evaluation/                       @HimanshuPal29
+/src/traffic/control/                          @HimanshuPal29
+/src/traffic/models/baselines.py               @HimanshuPal29
+/scripts/evaluate_all.py                       @HimanshuPal29
+/scripts/run_control.py                        @HimanshuPal29
+/scripts/make_report_assets.py                 @HimanshuPal29
+
+/src/traffic/data/load.py                      @kanchan97-cp
+/src/traffic/data/graph.py                     @kanchan97-cp
+/src/traffic/data/missing.py                   @kanchan97-cp
+/src/traffic/data/split.py                     @kanchan97-cp
+/src/traffic/data/scaling.py                   @kanchan97-cp
+/src/traffic/data/windows.py                   @kanchan97-cp
+/src/traffic/data/pipeline.py                  @kanchan97-cp
+/src/traffic/viz/eda_plots.py                  @kanchan97-cp
+/scripts/download_data.py                      @kanchan97-cp
+/scripts/run_eda.py                            @kanchan97-cp
+/scripts/run_ablations.py                      @kanchan97-cp
+
+/src/traffic/viz/congestion_map.py             @VaibhavSingh50
+/src/traffic/viz/horizon_plots.py              @VaibhavSingh50
+/src/traffic/viz/attention_viz.py              @VaibhavSingh50
+/scripts/make_maps.py                          @VaibhavSingh50
+/README.md                                     @VaibhavSingh50
+/slides/                                       @VaibhavSingh50
+/report/                                       @VaibhavSingh50
+/.github/workflows/                            @VaibhavSingh50

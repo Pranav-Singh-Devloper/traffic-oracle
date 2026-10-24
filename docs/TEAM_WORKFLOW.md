@@ -2,6 +2,17 @@
 
 **Why:** the course checks GitHub history for individual contribution. Authorship must be real, so each member commits from their own account. We do not rewrite history or fake authors. This takes about 15 minutes per person.
 
+## Identities (git must use the email registered on your GitHub account)
+| Member | GitHub | Email to use in `git config user.email` |
+|---|---|---|
+| Pranav Singh | Pranav-Singh-Devloper | raindeer.social@gmail.com (or pranavsinghprimo@gmail.com) |
+| Kunal | kunaldevsahu | kunal.sahu2024@nst.rishihood.edu.in |
+| Himanshu | HimanshuPal29 | himanshu.pal2024@nst.rishihood.edu.in |
+| Kanchan | kanchan97-cp | bansalkanchan23@gmail.com |
+| Vaibhav | VaibhavSingh50 | vaibhavsingh0564@gmail.com |
+
+`owners.py commit` stops if your git email does not match your row, so a commit is never silently attributed to the wrong person. Make sure the email is added and verified under GitHub -> Settings -> Emails.
+
 ## One-time setup (each member)
 ```bash
 git clone https://github.com/Pranav-Singh-Devloper/traffic-oracle.git && cd traffic-oracle
@@ -10,7 +21,7 @@ git config user.email "the-email-on-your-github-account"   # must match GitHub o
 uv venv --python 3.11 .venv && source .venv/bin/activate && uv pip install -e ".[dev]"
 make data        # downloads the dataset (needed to run anything)
 ```
-Pranav must add the other four as **collaborators** on the GitHub repo (Settings -> Collaborators).
+Pranav adds the other four as **collaborators** (Settings -> Collaborators): kunaldevsahu, HimanshuPal29, kanchan97-cp, VaibhavSingh50. Each must accept the emailed invitation.
 
 ## See your files
 ```bash

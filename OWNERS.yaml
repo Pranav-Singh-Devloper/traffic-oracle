@@ -3,6 +3,8 @@
 members:
   pranav_singh:
     name: Pranav Singh
+    github: Pranav-Singh-Devloper
+    emails: [raindeer.social@gmail.com, pranavsinghprimo@gmail.com]
     paths:
       - src/traffic/models/layers/*
       - src/traffic/models/stgat.py
@@ -21,6 +23,8 @@ members:
       - docs/viva/pranav_singh.md
   kunal:
     name: Kunal
+    github: kunaldevsahu
+    emails: [kunal.sahu2024@nst.rishihood.edu.in]
     paths:
       - src/traffic/features/lags.py
       - src/traffic/features/spatial.py
@@ -45,6 +49,8 @@ members:
       - docs/viva/kunal.md
   himanshu:
     name: Himanshu
+    github: HimanshuPal29
+    emails: [himanshu.pal2024@nst.rishihood.edu.in]
     paths:
       - src/traffic/evaluation/*
       - src/traffic/models/baselines.py
@@ -65,6 +71,8 @@ members:
       - docs/viva/himanshu.md
   kanchan:
     name: Kanchan
+    github: kanchan97-cp
+    emails: [bansalkanchan23@gmail.com]
     paths:
       - src/traffic/data/load.py
       - src/traffic/data/graph.py
@@ -93,6 +101,8 @@ members:
       - docs/viva/kanchan.md
   vaibhav:
     name: Vaibhav
+    github: VaibhavSingh50
+    emails: [vaibhavsingh0564@gmail.com]
     paths:
       - src/traffic/viz/*
       - scripts/make_maps.py
@@ -119,6 +129,9 @@ members:
       - LICENSE
 shared:   # owned by the whole team, changed by whoever needs to (via pull request)
   - OWNERS.yaml
+  - .mailmap
+  - docs/TEAM_WORKFLOW.md
+  - scripts/owners.py
   - CONTRIBUTIONS.md
   - SPEC.md
   - phases/*
