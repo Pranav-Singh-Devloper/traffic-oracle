@@ -19,3 +19,6 @@ Team T042. Also answer `shared_questions.md` (10 questions everyone must know). 
 15. **What do the bootstrap confidence intervals tell you that p-values do not?** They give the size and uncertainty of a difference in mph, resampling whole days so day-level difficulty cancels in paired comparisons.
 16. **Why is the Diebold-Mariano test applied per seed pair?** A single seed's errors depend on its random init; pairing seeds avoids comparing a seed's luck against a different seed's luck; we report the median statistic and the largest p-value.
 17. **What does the gain-decomposition table show?** MAE(component) minus MAE(hybrid) by horizon and slice; the residual hybrid helps most in congested states at long horizons.
+
+## Verification log
+- 2026-10-24 23:01: Himanshu ran `tests/test_metrics_masking.py tests/test_baselines.py tests/test_ctm.py` (15 passed in 13.81s) and `python scripts/run_baselines.py --debug` on their own machine.
