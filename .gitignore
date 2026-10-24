@@ -23,3 +23,7 @@ report/**/*.pdf
 results/debug/
 checkpoints*/
 logs/
+results/predictions_val/
+results/ablations/predictions/
+results/hybrid/
+results/debug/
