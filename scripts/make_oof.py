@@ -22,6 +22,7 @@ from traffic.config import load_config
 from traffic.data.pipeline import prepare
 from traffic.features.build_tabular import build_tabular, subsample_rows, targets
 from traffic.models import ml_models as mm
+from traffic.models.hybrid import oof_folds
 
 
 def main() -> None:
@@ -37,8 +38,8 @@ def main() -> None:
     h_, f, n = cfg["history_steps"], cfg["horizon_steps"], p.x_in.shape[1]
     tabs = {s: build_tabular(p, s, cfg, "global", False) for s in ("train", "val", "test")}
     a_tr = len(tabs["train"].anchors)
-    edges = np.linspace(0, a_tr, 6).astype(int)  # 5 blocks
-    gap = h_ + f - 1
+    folds = oof_folds(a_tr, 5, h_ + f - 1)
+    edges = np.array([fd[1].start for fd in folds] + [a_tr])
     params = dict(cfg["model"]["params"])
     frac = 0.15  # lighter than the final models: OOF only needs realistic, not optimal, errors
     oof = np.full((a_tr, f, n), np.nan, dtype=np.float32)
@@ -47,10 +48,8 @@ def main() -> None:
     for h in range(1, f + 1):
         y, m = targets(p, "train", h)
         yv, mv = targets(p, "val", h)
-        for k in range(1, 5):  # predict block k (0-indexed) from blocks < k
-            tr_end = max(edges[k] - gap, 0)
+        for tr_end, blk_anchors in folds:  # predict block from earlier blocks (+ gap)
             rows = np.arange(tr_end * n)
-            keep = np.flatnonzero(m.ravel()[rows])
             idx = subsample_rows(m.ravel()[rows], None, frac, cfg["seed"])
             va = subsample_rows(mv.ravel(), 20000, 1.0, cfg["seed"])
             model = mm.fit_xgb(
@@ -63,9 +62,8 @@ def main() -> None:
                 30,
                 seed=cfg["seed"],
             )
-            blk = slice(edges[k] * n, edges[k + 1] * n)
-            oof[edges[k] : edges[k + 1], h - 1] = model.predict(flat[blk]).reshape(-1, n)
-            del keep
+            blk = slice(blk_anchors.start * n, blk_anchors.stop * n)
+            oof[blk_anchors, h - 1] = model.predict(flat[blk]).reshape(-1, n)
         print(f"  OOF h={h:2d} done ({time.time() - t0:.0f}s)")
     # final models predict val and test
     val = np.zeros((len(tabs["val"].anchors), f, n), np.float32)

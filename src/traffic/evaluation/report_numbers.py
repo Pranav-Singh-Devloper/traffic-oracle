@@ -69,6 +69,31 @@ def build_macros(met: Path) -> dict[str, str]:
                     _fmt(r.ci_lo, 3),
                     _fmt(r.ci_hi, 3),
                 )
+    hg = met / "hybrid_gain.csv"
+    if hg.exists():
+        for r in pd.read_csv(hg).itertuples():
+            wh = {15: "Fifteen", 30: "Thirty", 60: "Sixty"}.get(r.horizon_min)
+            if (
+                wh
+                and r.slice in SLICE
+                and r.hybrid == "hybrid_residual"
+                and r.component in ("xgb_global", "stgat")
+            ):
+                m[f"gain{camel(r.component)}{SLICE[r.slice]}{wh}"] = _fmt(r.gain_mph, 3)
+    gw = met / "gate_weights_summary.csv"
+    if gw.exists():
+        for r in pd.read_csv(gw).itertuples():
+            if r.horizon in (3, 6, 12):
+                m[f"gatePeak{WORD[r.horizon]}"] = _fmt(r.mean_w_stgat_peak)
+                m[f"gateOffpeak{WORD[r.horizon]}"] = _fmt(r.mean_w_stgat_offpeak)
+    ab = met / "ablations.csv"
+    if ab.exists():
+        a = pd.read_csv(ab)
+        a = a[a.metric == "MAE"]
+        for r in a.itertuples():
+            wh = {15: "Fifteen", 30: "Thirty", 60: "Sixty"}.get(r.horizon_min)
+            if wh:
+                m[f"abl{camel(r.ablation)}{camel(r.variant)}{wh}"] = _fmt(r.mean)
     eda = met / "eda_stats.json"
     if eda.exists():
         s = json.loads(eda.read_text())

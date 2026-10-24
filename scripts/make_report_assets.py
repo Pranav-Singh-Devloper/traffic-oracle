@@ -50,6 +50,24 @@ def main() -> None:
         )
     readme = Path("README.md")
     insert_readme_block(readme, md)
+    sig_path = MET / "significance.csv"
+    if sig_path.exists():
+        sg = pd.read_csv(sig_path)
+        sg["pair"] = (sg.model_a + " vs " + sg.model_b).str.replace("_", " ")
+        sg["h"] = sg.horizon * 5
+        w = sg.pivot(index="pair", columns="h", values="dm_stat").round(1)
+        pv = sg.pivot(index="pair", columns="h", values="p_value")
+        out = w.copy()
+        for c in w.columns:
+            out[c] = [f"{v:.1f}" + ("*" if pv.loc[i, c] < 0.05 else "") for i, v in w[c].items()]
+        out.columns = [f"DM@{c}" for c in out.columns]
+        (TAB / "significance.tex").write_text(
+            to_latex(
+                out.reset_index(),
+                "Diebold-Mariano statistics (negative: first model better; * p<0.05).",
+                "tab:sig",
+            )
+        )
     n = write_numbers(MET, TAB / "numbers.tex")
     import shutil
 

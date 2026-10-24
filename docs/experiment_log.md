@@ -40,3 +40,17 @@
 | 2026-10-24 05:24 | hybrid_residual_seed0 | 01d73b7+dirty | 61765cd9 | `scripts/train_hybrid.py --kind residual --seeds 0 1 2` | {"val_mae": 2.9312} |
 | 2026-10-24 05:48 | hybrid_residual_seed1 | 01d73b7+dirty | 61765cd9 | `scripts/train_hybrid.py --kind residual --seeds 0 1 2` | {"val_mae": 2.9332} |
 | 2026-10-24 06:11 | hybrid_residual_seed2 | 01d73b7+dirty | 61765cd9 | `scripts/train_hybrid.py --kind residual --seeds 0 1 2` | {"val_mae": 2.9335} |
+| 2026-10-24 06:16 | baselines | ab8826e+dirty | adf531f3 | `scripts/run_baselines.py --debug` | {"seasonal_fallback_share": 0.22184115523465703} |
+| 2026-10-24 06:16 | xgb_per_segment | ab8826e+dirty | 1abf314e | `scripts/train_ml.py --model xgb_per_segment --debug` | {"train_seconds": 1} |
+| 2026-10-24 06:16 | xgb_global | ab8826e+dirty | b9fdae4d | `scripts/train_ml.py --model xgb_global --debug` | {"train_seconds": 1} |
+| 2026-10-24 06:16 | rf_multioutput | ab8826e+dirty | 5c7e1b9b | `scripts/train_ml.py --model rf --debug` | {"train_seconds": 0} |
+| 2026-10-24 06:16 | xgb_spatial | ab8826e+dirty | b9eeeca2 | `scripts/train_ml.py --model xgb_spatial --debug` | {"train_seconds": 1} |
+| 2026-10-24 06:16 | gru_nograph_seed0 | ab8826e+dirty | c6b1ca22 | `scripts/train_dl.py --model gru_nograph --debug` | {"val_mae": 8.5053, "epochs": 1, "seconds": 1} |
+| 2026-10-24 06:16 | stgat_seed0 | ab8826e+dirty | a25f01cf | `scripts/train_dl.py --model stgat --debug` | {"val_mae": 7.2307, "epochs": 1, "seconds": 1} |
+| 2026-10-24 06:17 | baselines | ab8826e+dirty | adf531f3 | `scripts/run_baselines.py --debug` | {"seasonal_fallback_share": 0.22184115523465703} |
+| 2026-10-24 06:17 | xgb_per_segment | ab8826e+dirty | 1abf314e | `scripts/train_ml.py --model xgb_per_segment --debug` | {"train_seconds": 1} |
+| 2026-10-24 06:17 | xgb_global | ab8826e+dirty | b9fdae4d | `scripts/train_ml.py --model xgb_global --debug` | {"train_seconds": 1} |
+| 2026-10-24 06:17 | rf_multioutput | ab8826e+dirty | 5c7e1b9b | `scripts/train_ml.py --model rf --debug` | {"train_seconds": 0} |
+| 2026-10-24 06:17 | xgb_spatial | ab8826e+dirty | b9eeeca2 | `scripts/train_ml.py --model xgb_spatial --debug` | {"train_seconds": 1} |
+| 2026-10-24 06:17 | gru_nograph_seed0 | ab8826e+dirty | c6b1ca22 | `scripts/train_dl.py --model gru_nograph --debug` | {"val_mae": 8.5053, "epochs": 1, "seconds": 1} |
+| 2026-10-24 06:17 | stgat_seed0 | ab8826e+dirty | a25f01cf | `scripts/train_dl.py --model stgat --debug` | {"val_mae": 7.2307, "epochs": 1, "seconds": 1} |
