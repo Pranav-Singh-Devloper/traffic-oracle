@@ -1,6 +1,6 @@
-# Viva prep: Kunal (rank 2): Phase 1 machine learning
+# Viva prep: Kunal (rank 2): Phase 1 machine learning and hybrid models
 
-Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
+Team T042. Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **List the tabular features.** Lags 0–11, rolling mean/std/min/max (3,6,12), diffs, missing flags, cyclic time, weekend/holiday, static sensor features (pooled).
 2. **Why is the daily lag off by default?** It uses data outside the 12-step window, breaking the equal-history comparison; run as a separate experiment.
@@ -22,3 +22,7 @@ Also answer `shared_questions.md` (10 questions everyone must know). Ownership: 
 18. **Which sensors are hardest?** A cluster near the same location (see `hardest_sensors_xgb_global_h12.csv`).
 19. **How do you check for leakage in features?** `test_features_no_future.py`: perturbing the future leaves features unchanged.
 20. **How are predictions mapped back to [S,F,N]?** Row order anchor-major; tested in `test_tabular_alignment.py`.
+21. **How is the OOF procedure done?** 5 chronological train blocks; block k predicted by a model trained on earlier blocks with a gap; block 1 dropped.
+22. **Why zero-initialise the residual head?** Hybrid starts as XGBoost; training can only add improvements.
+23. **How is the gate trained and what is the caveat?** First 80% of val train, last 20% early-stop; val no longer pure for model selection.
+24. **What would it mean if the hybrid doesn't beat STGAT?** STGAT already captures local structure; report honestly.

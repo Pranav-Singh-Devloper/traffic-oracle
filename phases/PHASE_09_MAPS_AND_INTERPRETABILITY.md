@@ -3,7 +3,7 @@
 **Goal:** maps and figures that make the results visible: forecasts on a map, where the graph helps, shockwaves in a space-time diagram, and GAT attention.
 **SPEC refs:** §13, §9.3, §14 M9.
 **Prerequisites:** Phases 4, 6 (Phase 7 optional for hybrid maps).
-**Owner:** Vaibhav (maps, space-time, summary plots); Pranav Singh (attention analysis)
+**Owner:** Vaibhav (maps, space-time, attention, summary plots)
 
 ---
 

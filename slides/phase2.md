@@ -6,6 +6,7 @@ paginate: true
 <!-- Numbers: results/metrics/*.csv and report/tables/numbers.tex. Control slides carry the simulation disclaimer. -->
 
 # Phase 2 — Graph attention vs per-segment ML on METR-LA
+Team T042: Pranav Singh, Kunal, Himanshu, Kanchan, Vaibhav
 
 ---
 # Recap and hypothesis

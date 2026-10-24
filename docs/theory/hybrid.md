@@ -1,6 +1,6 @@
 # Hybrid: residual learning with out-of-fold predictions
 
-**Owner:** Pranav Singh
+**Owner:** Kunal
 
 ## Rationale
 XGBoost captures local autoregression and calendar effects cheaply. Spatial propagation is its blind spot (Phase 1 gap analysis). We train a graph model on the **residual** `r = y − ŷ_XGB`, giving it ŷ_XGB as an input, so it concentrates on what XGBoost misses. The last decoder layer is zero-initialised, so training starts exactly at the XGBoost forecast.

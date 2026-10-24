@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "traffic"
 version = "0.1.0"
 description = "Traffic forecasting on METR-LA: GAT vs segment-level ML"
-authors = [{name = "Pranav Singh"}, {name = "Kunal"}, {name = "Himanshu"}, {name = "Kanchan"}, {name = "Vaibhav"}]
+authors = [{name = "Team T042"}, {name = "Pranav Singh"}, {name = "Kunal"}, {name = "Himanshu"}, {name = "Kanchan"}, {name = "Vaibhav"}]
 requires-python = ">=3.11,<3.12"
 dependencies = [
   "numpy", "pandas", "scipy", "scikit-learn", "xgboost", "torch",

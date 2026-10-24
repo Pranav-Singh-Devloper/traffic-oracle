@@ -1,6 +1,6 @@
 # Random Forest
 
-**Owner:** Kunal
+**Owner:** Vaibhav
 
 ## Idea
 Average many decorrelated, deep trees. Each tree is fit on a bootstrap sample (`max_samples`) and each split considers a random subset of features (`max_features`).

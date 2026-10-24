@@ -1,6 +1,6 @@
-# Viva prep: Kanchan (rank 4): data pipeline, graph, missing data, EDA
+# Viva prep: Kanchan (rank 4): data pipeline, graph, missing data, EDA, ablations
 
-Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
+Team T042. Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **What are the dataset facts you assert on load?** 207 sensors, 34,272 5-min steps (119 days), 2012-03-01 to 2012-06-27, regular index, no NaN, non-negative (`data/load.py`).
 2. **Why did `pd.read_hdf` fail and what did you do?** Old pandas fixed-format attributes are bytes; with new pandas/PyTables it raises TypeError. We fall back to PyTables (ADR-004); data identical, checks still pass.
@@ -22,3 +22,8 @@ Also answer `shared_questions.md` (10 questions everyone must know). Ownership: 
 18. **How were the example pairs in the xcorr figure chosen?** By stated rules (top correlation; largest non-zero lag among corr ≥ 0.5), plus a histogram over all pairs to avoid cherry-picking.
 19. **What distribution shift exists between splits?** Test has a higher outage rate than train/val.
 20. **How would you add PeMS flow/occupancy?** Feature builders take extra channels; lags/rolling stats generalise per channel.
+21. **What is over-smoothing and how do you test it?** Representations of neighbors converge with depth; ablation A6 (1/2/3 layers).
+22. **How is the ablation budget reduced and why is it still fair?** Short epochs, one seed, with a same-budget default run as the reference.
+23. **What does ablation A2 (random graph) test?** Whether road topology matters or just extra parameters.
+24. **How are H=6/24 compared fairly?** On the intersection of test target timestamps.
+25. **Why bidirectional adjacency as default?** More information and DCRNN also uses both directions; A3 tests directions separately.

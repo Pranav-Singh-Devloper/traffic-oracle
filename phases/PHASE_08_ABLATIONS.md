@@ -3,7 +3,7 @@
 **Goal:** change one thing at a time from the STGAT default, 3 seeds each, and answer a specific question per ablation.
 **SPEC refs:** §11, §8.3 (H sweep), §9.2 (regularization), §14 M8.
 **Prerequisites:** Phase 6 (and Phase 7 for A13).
-**Owner:** Pranav Singh (runner, configs); Himanshu (evaluation)
+**Owner:** Kanchan (runner, runs, write-up); Himanshu (evaluation)
 
 ---
 

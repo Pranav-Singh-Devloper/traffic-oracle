@@ -3,7 +3,7 @@
 **Goal:** 10 figures that describe METR-LA and, most importantly, show evidence that congestion **propagates between neighboring sensors** — the motivation for the graph model.
 **SPEC refs:** §6, §2, §5.2, §14 M2.
 **Prerequisites:** Phase 1 (loaders, mask, split, graph).
-**Owner:** Kanchan (analysis and figures)
+**Owner:** Kanchan
 
 ---
 

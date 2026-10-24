@@ -1,6 +1,6 @@
-# Viva prep: Himanshu (rank 3): evaluation, statistics, simulated control
+# Viva prep: Himanshu (rank 3): evaluation, statistics, baselines, simulated control
 
-Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
+Team T042. Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **What is the common prediction format?** npz with y_pred/y_true/mask [S,F,N], target_ts, sensor ids, meta; alignment asserted across models.
 2. **How are slices defined?** Peak = weekday AM/PM windows on target timestamp; off-peak weekday; weekend; congested (<40 mph) vs free-flow.

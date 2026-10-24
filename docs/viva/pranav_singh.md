@@ -1,6 +1,6 @@
-# Viva prep: Pranav Singh (rank 1): deep-learning core and hybrid models
+# Viva prep: Pranav Singh (rank 1): deep-learning core (GAT layer, STGAT, GRU, trainer)
 
-Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
+Team T042. Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **Describe the STGAT architecture.** Embed → +node embedding → L blocks (gated causal TCN → multi-head dense GAT per time step → ELU/dropout → residual+LayerNorm) → last-step readout → MLP decoder predicting all 12 horizons.
 2. **Why dense attention?** N=207 is small; masking by adjacency gives the exact sparse softmax and batches easily.
@@ -15,14 +15,10 @@ Also answer `shared_questions.md` (10 questions everyone must know). Ownership: 
 11. **Why 3 seeds?** To report mean ± std and avoid seed luck.
 12. **Why is the GRU ablation parameter-matched?** To isolate the graph, not capacity.
 13. **What does the identity-graph test show?** Node i's output is independent of node j's input; confirms no leakage across nodes.
-14. **What is over-smoothing and how do you test it?** Representations of neighbors converge with depth; ablation A6 (1/2/3 layers).
-15. **What is GATv2's memory issue and fix?** [B,N,N,K,D] tensor is huge; compute in checkpointed chunks.
-16. **How is the ablation budget reduced and why is it still fair?** Short epochs, one seed, with a same-budget default run as the reference.
-17. **What does ablation A2 (random graph) test?** Whether road topology matters or just extra parameters.
-18. **How are H=6/24 compared fairly?** On the intersection of test target timestamps.
-19. **Why bidirectional adjacency as default?** More information and DCRNN also uses both directions; A3 tests directions separately.
-20. **How do you keep GPU/CPU load laptop-friendly?** Small model, batch 64, nice priority, capped threads, sequential runs.
-21. **How is the OOF procedure done?** 5 chronological train blocks; block k predicted by a model trained on earlier blocks with a gap; block 1 dropped.
-22. **Why zero-initialise the residual head?** Hybrid starts as XGBoost; training can only add improvements.
-23. **How is the gate trained and what is the caveat?** First 80% of val train, last 20% early-stop; val no longer pure for model selection.
-24. **What would it mean if the hybrid doesn't beat STGAT?** STGAT already captures local structure; report honestly.
+14. **What is GATv2's memory issue and fix?** [B,N,N,K,D] tensor is huge; compute in checkpointed chunks.
+15. **How do you keep GPU/CPU load laptop-friendly?** Small model, batch 64, nice priority, capped threads, sequential runs.
+16. **How did you time the model and decide on the compute simplification?** Profiled iterations on MPS: dense attention at all 12 steps cost 3.7 min/epoch; attention is memory-bound. Applying GAT on the last 4 steps and training on a third of the windows per epoch gives about 0.6 min/epoch (ADR-007).
+17. **What is the sparse GAT layer and why is it exact?** It stores neighbour lists padded to D_max=26 and computes the same softmax over each node's neighbourhood; tested numerically equal to the dense layer and PyG. It did not speed things up because gathers dominate.
+18. **How does the trainer keep validation consistent with the metric?** Training uses masked MAE in scaled space; validation inverse-transforms to mph and early-stops on masked MAE in mph.
+19. **Why MPS instead of CPU, and what are the risks?** MPS was about 7x faster than CPU for STGAT; risks are op coverage and nondeterminism, so we fix seeds and report 3 seeds.
+20. **What did the three-seed comparison with the GRU show?** Equal at 15 min, slightly better at 30 (not significant), clearly better at 60 min (DM significant); see Table of main results.

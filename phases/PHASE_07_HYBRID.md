@@ -3,7 +3,7 @@
 **Goal:** a leakage-safe residual hybrid (XGBoost base + STGAT residual), a gating ensemble, and a simple average — each compared against both components with significance tests.
 **SPEC refs:** §10, §8.4, §14 M7.
 **Prerequisites:** Phases 4 (XGB-global) and 6 (STGAT, trainer).
-**Owner:** Pranav Singh (models, OOF); Himanshu (significance, gain analysis)
+**Owner:** Kunal (models, OOF); Himanshu (significance, gain analysis)
 
 ---
 

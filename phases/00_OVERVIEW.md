@@ -12,13 +12,13 @@ Build them **in order**. Each phase ends with tests, acceptance checks, a commit
 | 4 | [PHASE_04_ML_MODELS.md](PHASE_04_ML_MODELS.md) | M4 | XGB per-segment / global / spatial, RF, SHAP, gap analysis | Kunal |
 | 5 | [PHASE_05_PHASE1_REPORT.md](PHASE_05_PHASE1_REPORT.md) | M5 | Phase 1 IEEE report + slides | Vaibhav (+ all) |
 | 6 | [PHASE_06_DL_MODELS.md](PHASE_06_DL_MODELS.md) | M6 | Dense GAT, GRU-nograph, STGAT, trainer, (DCRNN-lite) | Pranav Singh |
-| 7 | [PHASE_07_HYBRID.md](PHASE_07_HYBRID.md) | M7 | OOF XGB, residual hybrid, gating, average | Pranav Singh, Himanshu |
-| 8 | [PHASE_08_ABLATIONS.md](PHASE_08_ABLATIONS.md) | M8 | A1–A13 table + figure | Pranav Singh, Himanshu |
-| 9 | [PHASE_09_MAPS_AND_INTERPRETABILITY.md](PHASE_09_MAPS_AND_INTERPRETABILITY.md) | M9 | Folium maps, error maps, space-time diagram, attention viz | Vaibhav, Pranav Singh |
+| 7 | [PHASE_07_HYBRID.md](PHASE_07_HYBRID.md) | M7 | OOF XGB, residual hybrid, gating, average | Kunal, Himanshu |
+| 8 | [PHASE_08_ABLATIONS.md](PHASE_08_ABLATIONS.md) | M8 | A1–A13 table + figure | Kanchan, Himanshu |
+| 9 | [PHASE_09_MAPS_AND_INTERPRETABILITY.md](PHASE_09_MAPS_AND_INTERPRETABILITY.md) | M9 | Folium maps, error maps, space-time diagram, attention viz | Vaibhav |
 | 10 | [PHASE_10_SIMULATED_CONTROL.md](PHASE_10_SIMULATED_CONTROL.md) | M10 (optional) | CTM + ALINEA + predictive ALINEA | Himanshu |
 | 11 | [PHASE_11_PHASE2_REPORT_AND_VIVA.md](PHASE_11_PHASE2_REPORT_AND_VIVA.md) | M11 | Phase 2 report, slides, theory notes, viva prep | Vaibhav (+ all) |
 
-**Team (by difficulty):** Pranav Singh > Kunal > Himanshu > Kanchan > Vaibhav; see `../CONTRIBUTIONS.md`.
+**Team T042 (ordered by difficulty):** Pranav Singh, Kunal, Himanshu, Kanchan, Vaibhav; see `../CONTRIBUTIONS.md`.
 
 ## Dependency graph
 

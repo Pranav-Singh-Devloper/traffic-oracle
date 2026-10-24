@@ -6,6 +6,7 @@ paginate: true
 <!-- Figures live in results/figures; numbers are in report/tables/numbers.tex and results/metrics/*.csv. -->
 
 # Traffic forecasting on METR-LA — Phase 1 (ML)
+Team T042: Pranav Singh, Kunal, Himanshu, Kanchan, Vaibhav
 Segment-level machine learning and the case for graph models
 
 <!-- Speaker note: state the question — does neighbour information help? -->
