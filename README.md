@@ -15,7 +15,7 @@ Graph attention networks vs. segment-level machine learning for 5-60 minute spee
 | **Kanchan** | Data pipeline, graph, missing data, EDA, ablation runs |
 | **Vaibhav** | Scaffold/CI, maps and attention plots, README/slides, report assembly |
 
-Details, module lists, report sections and viva files: [CONTRIBUTIONS.md](CONTRIBUTIONS.md), [docs/viva/](docs/viva/). **How each member commits their own files from their own account:** [docs/TEAM_WORKFLOW.md](docs/TEAM_WORKFLOW.md).
+Details, module lists, report sections and viva files: [CONTRIBUTIONS.md](CONTRIBUTIONS.md), [docs/viva/](docs/viva/). **Team members: after cloning, run `python3 join.py` and you are done** ([docs/TEAM_WORKFLOW.md](docs/TEAM_WORKFLOW.md)).
 
 ## Reproduce
 ```bash
