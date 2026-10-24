@@ -1,1 +1,1 @@
-model,horizon,MAE,MAPE,RMSE,horizon_min
+model,horizon,MAE,MAPE,RMSE,MAE_std,MAPE_std,RMSE_std,horizon_min

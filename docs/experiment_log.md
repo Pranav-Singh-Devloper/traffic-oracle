@@ -28,3 +28,15 @@
 | 2026-10-24 02:25 | abl_A3_backward_seed0 | 77d240b+dirty | 843a8071 | `scripts/train_dl.py --model stgat --name abl_A3_backward --out ablations --seeds 0 --set train.max_epochs=25 graph.variant=backward --debug` | {"val_mae": 5.36, "epochs": 1, "seconds": 2} |
 | 2026-10-24 02:27 | xgb_per_segment | c47669b+dirty | ec42d1cb | `scripts/train_ml.py --model xgb_per_segment` | {"train_seconds": 198} |
 | 2026-10-24 02:29 | rf_multioutput | c47669b+dirty | a1424194 | `scripts/train_ml.py --model rf` | {"train_seconds": 56} |
+| 2026-10-24 02:57 | xgb_global | 01d73b7+dirty | b9fdae4d | `scripts/train_ml.py --model xgb_global --debug` | {"train_seconds": 1} |
+| 2026-10-24 02:57 | stgat_seed0 | 01d73b7+dirty | a25f01cf | `scripts/train_dl.py --model stgat --debug` | {"val_mae": 7.2307, "epochs": 1, "seconds": 5} |
+| 2026-10-24 02:57 | hybrid_residual_seed0 | 01d73b7+dirty | cf66c754 | `scripts/train_hybrid.py --kind residual --debug` | {"val_mae": 6.033} |
+| 2026-10-24 03:03 | gru_nograph_seed0 | 01d73b7+dirty | 02b75d35 | `scripts/train_dl.py --model gru_nograph --seeds 0 1 2` | {"val_mae": 3.0136, "epochs": 40, "seconds": 490} |
+| 2026-10-24 03:11 | gru_nograph_seed1 | 01d73b7+dirty | 02b75d35 | `scripts/train_dl.py --model gru_nograph --seeds 0 1 2` | {"val_mae": 3.0088, "epochs": 40, "seconds": 496} |
+| 2026-10-24 03:18 | gru_nograph_seed2 | 01d73b7+dirty | 02b75d35 | `scripts/train_dl.py --model gru_nograph --seeds 0 1 2` | {"val_mae": 3.0162, "epochs": 33, "seconds": 413} |
+| 2026-10-24 03:47 | stgat_seed0 | 01d73b7+dirty | 5a846db6 | `scripts/train_dl.py --model stgat --seeds 0 1 2` | {"val_mae": 2.9817, "epochs": 40, "seconds": 1692} |
+| 2026-10-24 04:15 | stgat_seed1 | 01d73b7+dirty | 5a846db6 | `scripts/train_dl.py --model stgat --seeds 0 1 2` | {"val_mae": 2.9947, "epochs": 40, "seconds": 1685} |
+| 2026-10-24 04:44 | stgat_seed2 | 01d73b7+dirty | 5a846db6 | `scripts/train_dl.py --model stgat --seeds 0 1 2` | {"val_mae": 2.9802, "epochs": 40, "seconds": 1687} |
+| 2026-10-24 05:24 | hybrid_residual_seed0 | 01d73b7+dirty | 61765cd9 | `scripts/train_hybrid.py --kind residual --seeds 0 1 2` | {"val_mae": 2.9312} |
+| 2026-10-24 05:48 | hybrid_residual_seed1 | 01d73b7+dirty | 61765cd9 | `scripts/train_hybrid.py --kind residual --seeds 0 1 2` | {"val_mae": 2.9332} |
+| 2026-10-24 06:11 | hybrid_residual_seed2 | 01d73b7+dirty | 61765cd9 | `scripts/train_hybrid.py --kind residual --seeds 0 1 2` | {"val_mae": 2.9335} |

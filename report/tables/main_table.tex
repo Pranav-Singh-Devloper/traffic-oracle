@@ -6,13 +6,18 @@
 \toprule
 model & MAE@15 & MAE@30 & MAE@60 & RMSE@15 & RMSE@30 & RMSE@60 \\
 \midrule
+gru nograph & 2.89 & 3.31 & 3.76 & 5.62 & 6.66 & 7.71 \\
 historical average & 4.19 & 4.19 & 4.19 & 7.86 & 7.86 & 7.86 \\
+hybrid average & 2.84 & 3.25 & 3.64 & 5.53 & 6.51 & 7.39 \\
+hybrid gating & 2.84 & 3.23 & \textbf{3.61} & 5.52 & \textbf{6.45} & \textbf{7.34} \\
+hybrid residual & \textbf{2.82} & \textbf{3.22} & 3.65 & \textbf{5.46} & 6.45 & 7.46 \\
 persistence & 3.49 & 4.20 & 5.37 & 6.39 & 8.02 & 10.30 \\
 rf multioutput & 3.14 & 3.80 & 4.73 & 5.70 & 6.89 & 8.25 \\
 seasonal naive & 5.50 & 5.50 & 5.50 & 10.71 & 10.71 & 10.71 \\
+stgat & 2.90 & 3.28 & 3.67 & 5.52 & 6.48 & 7.44 \\
 xgb global & 2.88 & 3.33 & 3.78 & 5.69 & 6.80 & 7.76 \\
-xgb per segment & 2.86 & 3.28 & \textbf{3.68} & 5.60 & 6.62 & \textbf{7.52} \\
-xgb spatial & \textbf{2.82} & \textbf{3.26} & 3.73 & \textbf{5.46} & \textbf{6.54} & 7.54 \\
+xgb per segment & 2.86 & 3.28 & 3.68 & 5.60 & 6.62 & 7.52 \\
+xgb spatial & 2.82 & 3.26 & 3.73 & 5.46 & 6.54 & 7.54 \\
 \bottomrule
 \end{tabular}}
 \end{table}

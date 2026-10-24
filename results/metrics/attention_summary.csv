@@ -1,0 +1,3 @@
+period,n_windows,self,downstream_only,upstream_only,both_directions
+am_peak,72,0.101045564,0.39278865,0.3902395,0.11592629
+night,136,0.09903444,0.3895114,0.39176175,0.119692445

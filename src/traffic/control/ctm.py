@@ -8,7 +8,8 @@ capacity q_max, jam density rho_jam, backward wave speed w = q_max / (rho_jam - 
 Per step and cell: sending S_i = min(v_free*dt/L * n_i, Q_i*dt), receiving
 R_i = min(Q_i*dt, w*dt/L * (N_jam_i - n_i)); flow i->i+1 = min(S_i, R_{i+1}). At an on-ramp
 cell the mainline and the ramp share R_i; if both cannot be served, the mainline gets a
-priority share ``merge_priority`` (a documented modelling choice).
+priority share ``merge_priority`` (a documented modelling choice). A congested cell discharges
+at (1 - capacity_drop) of its capacity (the "capacity drop" that makes metering worthwhile).
 """
 
 from __future__ import annotations
@@ -43,6 +44,10 @@ class CTM:
     onramps: tuple[int, ...] = (2, 5, 8)  # cells receiving a ramp
     ramp_capacity: float = 1800.0  # veh/h, max ramp discharge when unmetered
     merge_priority: float = 0.7  # mainline share when merging is capacity-limited
+    capacity_drop: float = (
+        0.12  # discharge capacity lost by a congested cell (queue-discharge drop)
+    )
+    drop_density_factor: float = 1.15  # congested when lane density > factor * rho_crit
     bottleneck: dict[int, float] = field(
         default_factory=lambda: {10: 0.75}
     )  # cell -> capacity factor
@@ -86,7 +91,9 @@ class CTM:
     ):
         """Advance one step. Demands in veh/h; ramp_rate = metering rate (veh/h) per ramp cell."""
         fd, dt, n = self.fd, self.dt, self.n_cells
-        send = np.minimum(fd.v_free * dt / self.cell_len * self.n, self.cap * dt)
+        congested = self.density() / fd.lanes > self.drop_density_factor * fd.rho_crit
+        cap_send = np.where(congested, self.cap * (1 - self.capacity_drop), self.cap)
+        send = np.minimum(fd.v_free * dt / self.cell_len * self.n, cap_send * dt)
         recv = np.minimum(self.cap * dt, fd.w * dt / self.cell_len * (self.n_jam - self.n))
         inflow = np.zeros(n)
         outflow = np.zeros(n)
@@ -115,7 +122,7 @@ class CTM:
             if i in self.onramps:
                 self.queue[i] += ramp_demand[i] * dt - f_ramp
                 self.in_total += f_ramp
-        exit_flow = min(send[-1], self.cap[-1] * dt)
+        exit_flow = send[-1]
         outflow[-1] = exit_flow
         self.out_total += exit_flow
         self.n = self.n + inflow - outflow

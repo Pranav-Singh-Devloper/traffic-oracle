@@ -39,7 +39,7 @@ def interp(x: np.ndarray) -> np.ndarray:
     return pd.DataFrame(x).interpolate(limit_direction="both").to_numpy()
 
 
-def make_day(p, pred, day, sensor_idx: list[int], ci_idx: list[int]) -> DayInputs:
+def make_day(p, pred, day, sensor_idx: list[int], ci_ref: float) -> DayInputs:
     ix = p.index
     sel = np.flatnonzero(
         (ix.date == day)
@@ -47,7 +47,8 @@ def make_day(p, pred, day, sensor_idx: list[int], ci_idx: list[int]) -> DayInput
         & (ix.hour * 60 + ix.minute < END_H * 60)
     )
     v = np.where(p.mask[sel], p.speed[sel], np.nan)
-    ci = np.clip((65 - np.nanmean(interp(v[:, ci_idx]), axis=1)) / 45, 0, 1)
+    raw = (65 - np.nanmean(interp(v[:, sensor_idx]), axis=1)) / 45
+    ci = np.clip(raw / ci_ref, 0, 1)
     fc_pred = np.full((len(sel), len(sensor_idx)), np.nan)
     fc_true = np.full_like(fc_pred, np.nan)
     if pred is not None:
@@ -62,7 +63,7 @@ def make_day(p, pred, day, sensor_idx: list[int], ci_idx: list[int]) -> DayInput
                 )
         fc_true = interp(fc_true)
         fc_pred = interp(fc_pred)
-    return DayInputs(ci, fc_pred, fc_true, str(day))
+    return DayInputs(ci, fc_pred, fc_true, str(day), ci_ref)
 
 
 def main() -> None:
@@ -75,10 +76,6 @@ def main() -> None:
     cor = json.loads(Path("results/metrics/corridor.json").read_text())
     ci_idx = cor["indices"]
     sensor_idx = [ci_idx[int(round(k))] for k in np.linspace(0, len(ci_idx) - 1, N_CELLS)]
-
-    def congestion(days, lo, hi):
-        d = pd.Series(0.0, index=days)
-        return d
 
     ix = p.index
     wk = ix.day_of_week < 5
@@ -95,9 +92,15 @@ def main() -> None:
     full = [d for d in test_days if (pd.DatetimeIndex(pred.target_ts[:, 0]).date == d).sum() > 250]
     days = list(daily.loc[full].sort_values(ascending=False).index[:5])
     print("val day", val_day, "test days", days)
-    fixed, grid = tune_fixed_rate(make_day(p, None, val_day, sensor_idx, ci_idx))
+    tr = np.flatnonzero((ix[: split.train.stop].day_of_week < 5) & am[: split.train.stop])
+    tr_raw = (
+        65 - np.nanmean(interp(np.where(p.mask[tr], p.speed[tr], np.nan)[:, sensor_idx]), axis=1)
+    ) / 45
+    ci_ref = float(np.percentile(tr_raw, 95))  # TRAIN period only
+    print("congestion-index reference (train p95):", round(ci_ref, 3))
+    fixed, grid = tune_fixed_rate(make_day(p, None, val_day, sensor_idx, ci_ref))
     print("fixed-time rate (tuned on val day):", fixed)
-    inputs = [make_day(p, pred, d, sensor_idx, ci_idx) for d in days]
+    inputs = [make_day(p, pred, d, sensor_idx, ci_ref) for d in days]
     res = run_policies(inputs, fixed)
     out = Path("results/metrics")
     res.to_csv(out / "control_results.csv", index=False)

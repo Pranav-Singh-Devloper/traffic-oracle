@@ -11,6 +11,7 @@ The simulator is open loop: its own congestion does not feed back into the STGAT
 
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass
 
 import numpy as np
@@ -24,7 +25,15 @@ DISCLAIMER = (
     "This is an offline simulation on a synthetic network. It demonstrates how forecasts could "
     "inform a control policy. No live or real-world traffic control is performed or claimed."
 )
-POLICIES = ["no_control", "fixed_time", "alinea", "predictive_alinea", "oracle_predictive_alinea"]
+POLICIES = [
+    "no_control",
+    "fixed_time",
+    "alinea",
+    "predictive_alinea",
+    "oracle_predictive_alinea",
+    "lookahead_alinea",
+    "oracle_lookahead_alinea",
+]
 WARMUP_H, START_H, END_H = 4.5, 5.0, 11.0
 
 
@@ -36,13 +45,36 @@ class DayInputs:
     fc_pred: np.ndarray  # [T, n_cells] +15 min speed forecast made at this slot
     fc_true: np.ndarray  # [T, n_cells] true speed 15 min later
     date: str
+    ci_ref: float = 0.2  # train-period 95th percentile of the raw congestion index
+
+
+def ci_from_speeds(v: np.ndarray, ci_ref: float) -> float:
+    """Congestion index in [0, 1] from corridor speeds (scaled by the train p95 reference)."""
+    return float(np.clip(((65.0 - np.mean(v)) / 45.0) / ci_ref, 0.0, 1.0))
+
+
+def lookahead_occupancy(
+    ctm: CTM, ci_now: float, ci_future: float, rates: dict, steps: int = 90
+) -> np.ndarray:
+    """Roll a copy of the simulator forward 15 min under the CURRENT metering rates.
+
+    Demand moves linearly from the current index to the forecast index. Because it starts from
+    the live simulator state, the forecast only supplies information about future demand, so it
+    cannot contradict the simulated state (unlike feeding forecast speeds in directly).
+    """
+    sim = copy.deepcopy(ctm)
+    for j in range(steps):
+        ci = ci_now + (ci_future - ci_now) * (j + 1) / steps
+        main, ramp = demand(ci, sim)
+        sim.step(main, ramp, rates)
+    return sim.occupancy()
 
 
 def demand(ci: float, ctm: CTM) -> tuple[float, dict[int, float]]:
     """Synthetic mainline and ramp demands (veh/h) shaped by the congestion index."""
     q_total = ctm.fd.q_max * ctm.fd.lanes
-    main = q_total * (0.50 + 0.30 * ci)
-    ramp = {c: 600.0 * (0.6 + 0.8 * ci) for c in ctm.onramps}
+    main = q_total * (0.45 + 0.22 * ci)
+    ramp = {c: 250.0 + 150.0 * ci for c in ctm.onramps}
     return main, ramp
 
 
@@ -54,7 +86,7 @@ def simulate(policy: str, day: DayInputs, fixed_rate: float = 900.0, ctl_steps: 
     for c in ctm.onramps:
         if policy == "alinea":
             ctrl[c] = Alinea(o_target)
-        elif policy.endswith("predictive_alinea"):
+        elif policy.endswith("predictive_alinea") or "lookahead" in policy:
             ctrl[c] = PredictiveAlinea(o_target, fd=fd)
     rate = {c: ctm.ramp_capacity for c in ctm.onramps}
     steps_per_slot = int(round(5 / 60 / ctm.dt))
@@ -76,6 +108,12 @@ def simulate(policy: str, day: DayInputs, fixed_rate: float = 900.0, ctl_steps: 
                 down = min(c + 1, ctm.n_cells - 1)
                 if policy == "alinea":
                     rate[c] = ct.update(occ[down])
+                elif "lookahead" in policy:
+                    src = day.fc_true if policy.startswith("oracle") else day.fc_pred
+                    if c == min(ctrl):  # one look-ahead per control step, shared by all ramps
+                        ci_f = ci_from_speeds(src[slot], day.ci_ref)
+                        pred_occ = lookahead_occupancy(ctm, day.ci[slot], ci_f, rate)
+                    rate[c] = ct.update(max(occ[down], pred_occ[down]))
                 else:
                     f = (day.fc_true if policy.startswith("oracle") else day.fc_pred)[slot, down]
                     rate[c] = ct.update_with_forecast(occ[down], f)
@@ -116,7 +154,7 @@ def run_policies(days: list[DayInputs], fixed_rate: float) -> pd.DataFrame:
 
 
 def tune_fixed_rate(
-    val_day: DayInputs, grid=(500, 650, 800, 950, 1100, 1300)
+    val_day: DayInputs, grid=(200, 250, 300, 350, 400, 500)
 ) -> tuple[float, pd.DataFrame]:
     """Pick the fixed-time rate that minimises TTS on a VALIDATION-period day."""
     res = [(r, simulate("fixed_time", val_day, r)["TTS_veh_h"]) for r in grid]
