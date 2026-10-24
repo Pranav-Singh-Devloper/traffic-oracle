@@ -1,6 +1,6 @@
-# Viva prep: Member C — GAT layer, GRU-nograph, STGAT, training, ablations
+# Viva prep: Pranav Singh (rank 1): deep-learning core and hybrid models
 
-_Name: TODO (fill in from CONTRIBUTIONS.md). Also answer `shared_questions.md`._
+Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **Describe the STGAT architecture.** Embed → +node embedding → L blocks (gated causal TCN → multi-head dense GAT per time step → ELU/dropout → residual+LayerNorm) → last-step readout → MLP decoder predicting all 12 horizons.
 2. **Why dense attention?** N=207 is small; masking by adjacency gives the exact sparse softmax and batches easily.
@@ -22,3 +22,7 @@ _Name: TODO (fill in from CONTRIBUTIONS.md). Also answer `shared_questions.md`._
 18. **How are H=6/24 compared fairly?** On the intersection of test target timestamps.
 19. **Why bidirectional adjacency as default?** More information and DCRNN also uses both directions; A3 tests directions separately.
 20. **How do you keep GPU/CPU load laptop-friendly?** Small model, batch 64, nice priority, capped threads, sequential runs.
+21. **How is the OOF procedure done?** 5 chronological train blocks; block k predicted by a model trained on earlier blocks with a gap; block 1 dropped.
+22. **Why zero-initialise the residual head?** Hybrid starts as XGBoost; training can only add improvements.
+23. **How is the gate trained and what is the caveat?** First 80% of val train, last 20% early-stop; val no longer pure for model selection.
+24. **What would it mean if the hybrid doesn't beat STGAT?** STGAT already captures local structure; report honestly.

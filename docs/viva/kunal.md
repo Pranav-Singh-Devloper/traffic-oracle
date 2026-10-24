@@ -1,6 +1,6 @@
-# Viva prep: Member B — features, Phase 1 ML, SHAP, gap analysis
+# Viva prep: Kunal (rank 2): Phase 1 machine learning
 
-_Name: TODO (fill in from CONTRIBUTIONS.md). Also answer `shared_questions.md`._
+Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **List the tabular features.** Lags 0–11, rolling mean/std/min/max (3,6,12), diffs, missing flags, cyclic time, weekend/holiday, static sensor features (pooled).
 2. **Why is the daily lag off by default?** It uses data outside the 12-step window, breaking the equal-history comparison; run as a separate experiment.

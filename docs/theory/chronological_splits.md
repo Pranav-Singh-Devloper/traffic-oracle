@@ -1,5 +1,7 @@
 # Chronological splits
 
+**Owner:** Kanchan
+
 ## Idea
 Traffic speed is strongly autocorrelated and we slide windows with stride 1, so neighboring samples share almost all of their inputs and targets. A random train/test split puts near-copies of test samples in training: the model is rewarded for memorising the immediate past, and the measured error is far lower than what it would achieve on genuinely new days.
 

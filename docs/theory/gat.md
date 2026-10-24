@@ -1,5 +1,7 @@
 # Graph Attention Networks (GAT)
 
+**Owner:** Pranav Singh
+
 Implemented in `src/traffic/models/layers/gat_dense.py` and tested against PyG (`tests/test_gat_layer.py`).
 
 ## Equations (one head)

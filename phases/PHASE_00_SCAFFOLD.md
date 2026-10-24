@@ -3,6 +3,7 @@
 **Goal:** an empty but working project: structure, configs, seeding, lint, tests, CI. No data or models yet.
 **SPEC refs:** §4 (structure + stack), §5.1 (base config), §19 (code quality), §14 M0.
 **Prerequisites:** none.
+**Owner:** Vaibhav (scaffold, CI, README); reviewed by Pranav Singh
 
 ---
 

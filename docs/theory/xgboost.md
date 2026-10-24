@@ -1,5 +1,7 @@
 # XGBoost
 
+**Owner:** Kunal
+
 ## Model
 Additive trees: `ŷ_i = Σ_{k=1}^K f_k(x_i)`, each `f_k` a regression tree with leaf weights `w`.
 

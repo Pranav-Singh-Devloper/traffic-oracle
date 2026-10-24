@@ -6,6 +6,17 @@ Graph attention networks vs. segment-level machine learning for 5-60 minute spee
 
 ![Error vs horizon](results/figures/error_vs_horizon_all_models.png)
 
+## Team (ordered by difficulty and technical depth of the work owned)
+| Member | Owns |
+|---|---|
+| **Pranav Singh** | Deep-learning core (GAT layer, STGAT, GRU, trainer), hybrids, ablations, attention viz |
+| **Kunal** | Phase 1 ML: features, XGBoost, Random Forest, tuning, SHAP, gap analysis |
+| **Himanshu** | Evaluation and statistics, baselines, simulated control |
+| **Kanchan** | Data pipeline, graph, missing data, EDA |
+| **Vaibhav** | Scaffold, maps and plots, README/slides, report assembly |
+
+Details, module lists, report sections and viva files: [CONTRIBUTIONS.md](CONTRIBUTIONS.md), [docs/viva/](docs/viva/).
+
 ## Reproduce
 ```bash
 uv venv --python 3.11 .venv && source .venv/bin/activate

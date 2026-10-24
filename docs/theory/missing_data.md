@@ -1,5 +1,7 @@
 # Missing data
 
+**Owner:** Kanchan
+
 ## Zero is not "no traffic"
 In METR-LA a speed of 0 almost always means the loop detector did not report. Treating it as a real speed teaches a model that sensors randomly crash to 0 mph.
 

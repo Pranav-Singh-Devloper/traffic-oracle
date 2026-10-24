@@ -3,6 +3,7 @@
 **Goal:** an IEEE-format Phase 1 report and a slide outline. Every number is generated, never typed.
 **SPEC refs:** §17 (Phase 1 structure), §18 (literature), §15 (theory topics 1–3, 8, 9), §14 M5.
 **Prerequisites:** Phase 4.
+**Owner:** Vaibhav (assembly) with sections by Kanchan, Kunal, Himanshu
 
 ---
 

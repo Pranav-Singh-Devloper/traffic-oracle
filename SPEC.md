@@ -514,11 +514,12 @@ Write one concise Markdown file per topic, with equations, intuition, and "likel
 ---
 
 ## 16. Team Contribution & Individual Viva Readiness
-- `CONTRIBUTIONS.md` contains a table of member → modules owned → experiments run → report sections written. Fill in the team's actual names. Suggested split for 4 members (adjust to team size):
-  - **Member A:** data pipeline, graph construction, EDA, missing-data handling
-  - **Member B:** feature engineering, all Phase 1 ML models, SHAP, gap analysis
-  - **Member C:** STGAT, GAT layer, GRU-nograph, DL training, ablations
-  - **Member D:** evaluation framework, significance tests, hybrid, maps, control simulation
+- `CONTRIBUTIONS.md` contains a table of member → modules owned → experiments run → report sections written. Actual split for the 5-member team (ordered by difficulty; see `CONTRIBUTIONS.md`):
+  - **Pranav Singh (rank 1, hardest):** GAT layer, STGAT, GRU-nograph, DL training, hybrid (OOF, residual, gating), ablations, attention visualisation, architecture ADRs
+  - **Kunal (rank 2):** feature engineering, all Phase 1 ML models and tuning, SHAP, gap analysis
+  - **Himanshu (rank 3):** evaluation framework, baselines, significance tests, hybrid gain analysis, simulated control
+  - **Kanchan (rank 4):** data pipeline, graph construction, missing-data handling, EDA
+  - **Vaibhav (rank 5, lightest):** scaffold/CI, maps and plots, README, slides, report assembly, bibliography checks
 - **Everyone** must be able to explain: the split protocol, masking, the adjacency construction, the GAT equations, the hybrid OOF logic, and the headline results.
 - Commits should come from each member's own account to their owned modules (graders look at GitHub history). Use feature branches and pull requests with short descriptions.
 - `docs/viva/<member>.md` contains about 20 likely questions on the member's own modules plus 10 shared questions, with answers.

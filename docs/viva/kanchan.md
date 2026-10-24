@@ -1,6 +1,6 @@
-# Viva prep: Member A — data pipeline, graph, EDA, missing data
+# Viva prep: Kanchan (rank 4): data pipeline, graph, missing data, EDA
 
-_Name: TODO (fill in from CONTRIBUTIONS.md). Also answer `shared_questions.md`._
+Also answer `shared_questions.md` (10 questions everyone must know). Ownership: see `CONTRIBUTIONS.md`.
 
 1. **What are the dataset facts you assert on load?** 207 sensors, 34,272 5-min steps (119 days), 2012-03-01 to 2012-06-27, regular index, no NaN, non-negative (`data/load.py`).
 2. **Why did `pd.read_hdf` fail and what did you do?** Old pandas fixed-format attributes are bytes; with new pandas/PyTables it raises TypeError. We fall back to PyTables (ADR-004); data identical, checks still pass.

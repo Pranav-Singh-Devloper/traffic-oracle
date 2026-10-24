@@ -6,6 +6,7 @@
 **Goal:** a pure-Python freeway corridor simulator (Cell Transmission Model) comparing ramp-metering policies, including one driven by STGAT forecasts.
 **SPEC refs:** §12, §2.3, §14 M10.
 **Prerequisites:** Phase 6 (STGAT predictions), Phase 9 (corridor sensor list).
+**Owner:** Himanshu
 
 ---
 

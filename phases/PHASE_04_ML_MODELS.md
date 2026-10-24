@@ -3,6 +3,7 @@
 **Goal:** tabular features, four ML models, tuning, SHAP, and the **gap analysis** (does a hand-made spatial feature help, and where?).
 **SPEC refs:** §7.2–7.5, §8.3, §14 M4.
 **Prerequisites:** Phases 1 and 3.
+**Owner:** Kunal
 
 ---
 

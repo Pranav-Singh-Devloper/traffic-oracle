@@ -3,6 +3,7 @@
 **Goal:** one evaluation pipeline that every model goes through, plus three naive baselines that every model must beat.
 **SPEC refs:** §7.1, §8 (all), §14 M3.
 **Prerequisites:** Phase 1.
+**Owner:** Himanshu
 
 ---
 

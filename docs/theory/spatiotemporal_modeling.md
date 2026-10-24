@@ -1,5 +1,7 @@
 # Spatio-temporal modeling
 
+**Owner:** Pranav Singh
+
 ## Shockwaves
 Congestion starts at a bottleneck and the jam's tail moves upstream at roughly 10–15 mph (our CTM backward wave speed w ≈ 12 mph). A sensor upstream of a bottleneck will slow down minutes after downstream sensors do. A per-segment model sees only its own past and learns this only indirectly, while a graph model can read the downstream state directly.
 

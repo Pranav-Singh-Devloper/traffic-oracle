@@ -10,10 +10,10 @@ Legend: DONE, PARTIAL (what is missing), NOT DONE.
 | Ablation table + figure | PARTIAL | A1-A12 run with **1 seed and 12 epochs** (spec: 3 seeds). A13 is read from the main table. XGB history-window sweep (A11 for ML) not run. `ablations.csv`, `results/figures/ablations/` |
 | Congestion maps (interactive + static), error maps, space-time diagram, attention viz | DONE | `results/maps/*.html`, `results/figures/maps/` |
 | Optional control experiment with disclaimer | DONE (CTM only; SUMO alternative not built) | `docs/control_results.md`, `docs/control_assumptions.md`. Demand is synthetic; forecasts gave no measurable benefit. |
-| Phase 1 and Phase 2 IEEE reports compile; numbers auto-generated | DONE | `report/phase{1,2}/main.pdf` built with tectonic; numbers via `report/tables/numbers.tex`. Configuration constants (trial counts, row shares) are typed in prose. Author names are placeholders. |
+| Phase 1 and Phase 2 IEEE reports compile; numbers auto-generated | DONE | `report/phase{1,2}/main.pdf` built with tectonic; numbers via `report/tables/numbers.tex`. Configuration constants (trial counts, row shares) are typed in prose. Authors: the five team members. |
 | Slides for both phases | PARTIAL | `slides/phase1.md`, `slides/phase2.md` are Marp sources; not rendered/rehearsed. |
-| Theory notes + per-member viva prep | DONE | `docs/theory/` (11 files), `docs/viva/` (4 members + shared). Member names are placeholders. |
-| CI green, README reproducible, CONTRIBUTIONS complete | PARTIAL | Local `make lint` and `make test` pass. CI workflow written but never run (no remote). CONTRIBUTIONS still has TODO names. |
+| Theory notes + per-member viva prep | DONE | `docs/theory/` (11 files), `docs/viva/` (5 members + shared). One viva file per member. |
+| CI green, README reproducible, CONTRIBUTIONS complete | PARTIAL | Local `make lint` and `make test` pass. CI workflow written but never run (no remote). CONTRIBUTIONS lists the five members; commit history so far is from one account. |
 
 ## Deviations from the spec (all in `docs/decisions.md`)
 - Reduced compute budgets: Optuna 15/6 trials, pooled XGB on 25% rows, RF on 10% rows (ADR-006).

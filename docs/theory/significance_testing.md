@@ -1,5 +1,7 @@
 # Significance testing
 
+**Owner:** Himanshu
+
 ## Diebold–Mariano (DM)
 Compare two forecasts' loss series `d_t = L(e1_t) − L(e2_t)` (absolute error averaged over sensors, per horizon). Under H0, `E[d_t] = 0`. Statistic `DM = d̄ / sqrt(V̂/T)` where V̂ is a long-run variance.
 

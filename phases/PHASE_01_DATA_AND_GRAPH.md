@@ -3,6 +3,7 @@
 **Goal:** download METR-LA, load it safely, rebuild and verify the road graph, build the missing mask, split by time, scale on train only, and build sliding windows. Everything later depends on this phase being leak-free.
 **SPEC refs:** §2, §3, §5.2–5.7, §14 M1.
 **Prerequisites:** Phase 0.
+**Owner:** Kanchan
 
 ---
 

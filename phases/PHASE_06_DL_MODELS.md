@@ -3,6 +3,7 @@
 **Goal:** our own dense GAT layer (proven equal to PyG's), the no-graph GRU ablation, the main STGAT model, a reusable trainer, and 3-seed results. Optional DCRNN-lite.
 **SPEC refs:** §9, §8.3, §14 M6.
 **Prerequisites:** Phases 1 and 3 (Phase 4 for comparison).
+**Owner:** Pranav Singh
 
 ---
 

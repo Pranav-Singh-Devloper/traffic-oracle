@@ -3,6 +3,7 @@
 **Goal:** finish the deliverables: Phase 2 IEEE report, slides, theory notes, per-member viva prep, and a reproducible README.
 **SPEC refs:** §15, §16, §17 (Phase 2 structure), §18, §19, §20, §14 M11.
 **Prerequisites:** Phases 6–9 (10 if done).
+**Owner:** Vaibhav (assembly, docs); each member writes their own viva file and theory notes
 
 ---
 

@@ -1,5 +1,7 @@
 # Diffusion convolution (DCRNN)
 
+**Owner:** Pranav Singh
+
 Optional model (`dcrnn_lite`); the main project uses attention instead.
 
 ## Idea
