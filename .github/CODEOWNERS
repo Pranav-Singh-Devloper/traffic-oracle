@@ -1,0 +1,13 @@
+# GitHub asks these people to review changes to their files (pull-request reviews show up in history).
+# Replace the usernames below with each member's real GitHub username, then uncomment.
+# Source of truth for ownership: OWNERS.yaml
+*                                   @Pranav-Singh-Devloper
+# /src/traffic/features/            @KUNAL_USERNAME
+# /src/traffic/models/ml_models.py  @KUNAL_USERNAME
+# /src/traffic/models/hybrid.py     @KUNAL_USERNAME
+# /src/traffic/evaluation/          @HIMANSHU_USERNAME
+# /src/traffic/control/             @HIMANSHU_USERNAME
+# /src/traffic/data/                @KANCHAN_USERNAME
+# /src/traffic/viz/                 @VAIBHAV_USERNAME
+# /README.md                        @VAIBHAV_USERNAME
+# /report/                          @VAIBHAV_USERNAME

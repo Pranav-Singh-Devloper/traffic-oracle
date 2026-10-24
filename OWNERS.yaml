@@ -1,0 +1,134 @@
+# Single source of truth for who owns which files (Team T042). Order = difficulty rank.
+# Patterns are matched with fnmatch against repo-relative paths; first match wins.
+members:
+  pranav_singh:
+    name: Pranav Singh
+    paths:
+      - src/traffic/models/layers/*
+      - src/traffic/models/stgat.py
+      - src/traffic/models/gru_nograph.py
+      - src/traffic/models/factory.py
+      - src/traffic/training/trainer.py
+      - src/traffic/training/losses.py
+      - src/traffic/data/datasets.py
+      - scripts/train_dl.py
+      - scripts/run_dl_chain.sh
+      - configs/dl/*
+      - tests/test_gat_layer.py
+      - tests/test_stgat_shapes.py
+      - docs/theory/gat.md
+      - docs/theory/spatiotemporal_modeling.md
+      - docs/viva/pranav_singh.md
+  kunal:
+    name: Kunal
+    paths:
+      - src/traffic/features/lags.py
+      - src/traffic/features/spatial.py
+      - src/traffic/features/build_tabular.py
+      - src/traffic/models/ml_models.py
+      - src/traffic/models/hybrid.py
+      - src/traffic/training/tuning.py
+      - scripts/train_ml.py
+      - scripts/run_ml_chain.sh
+      - scripts/make_oof.py
+      - scripts/train_hybrid.py
+      - scripts/ml_analysis.py
+      - configs/ml/*
+      - configs/hybrid/*
+      - tests/test_features_no_future.py
+      - tests/test_tabular_alignment.py
+      - tests/test_hybrid.py
+      - docs/gap_analysis.md
+      - docs/hybrid_analysis.md
+      - docs/theory/xgboost.md
+      - docs/theory/hybrid.md
+      - docs/viva/kunal.md
+  himanshu:
+    name: Himanshu
+    paths:
+      - src/traffic/evaluation/*
+      - src/traffic/models/baselines.py
+      - src/traffic/control/*
+      - scripts/run_baselines.py
+      - scripts/evaluate_all.py
+      - scripts/evaluate_ablations.py
+      - scripts/hybrid_analysis.py
+      - scripts/run_control.py
+      - scripts/make_report_assets.py
+      - tests/test_metrics_masking.py
+      - tests/test_baselines.py
+      - tests/test_ctm.py
+      - docs/control_*.md
+      - docs/theory/metrics.md
+      - docs/theory/significance_testing.md
+      - docs/theory/control.md
+      - docs/viva/himanshu.md
+  kanchan:
+    name: Kanchan
+    paths:
+      - src/traffic/data/load.py
+      - src/traffic/data/graph.py
+      - src/traffic/data/missing.py
+      - src/traffic/data/split.py
+      - src/traffic/data/scaling.py
+      - src/traffic/data/windows.py
+      - src/traffic/data/pipeline.py
+      - src/traffic/features/temporal.py
+      - src/traffic/viz/eda_plots.py
+      - scripts/download_data.py
+      - scripts/prepare_data.py
+      - scripts/run_eda.py
+      - scripts/make_eda_summary.py
+      - scripts/run_ablations.py
+      - scripts/run_ablation_chain.sh
+      - tests/test_load.py
+      - tests/test_graph.py
+      - tests/test_split_no_leakage.py
+      - tests/test_scaling_train_only.py
+      - tests/test_windows.py
+      - docs/eda_summary.md
+      - docs/ablation_analysis.md
+      - docs/theory/chronological_splits.md
+      - docs/theory/missing_data.md
+      - docs/viva/kanchan.md
+  vaibhav:
+    name: Vaibhav
+    paths:
+      - src/traffic/viz/*
+      - scripts/make_maps.py
+      - scripts/make_docs.py
+      - scripts/run_phase2_chain.sh
+      - README.md
+      - slides/*
+      - report/*
+      - Makefile
+      - pyproject.toml
+      - requirements.txt
+      - .github/*
+      - .pre-commit-config.yaml
+      - .gitignore
+      - tests/test_config.py
+      - tests/test_end_to_end_debug.py
+      - tests/conftest.py
+      - docs/theory/random_forest.md
+      - docs/theory/diffusion_conv.md
+      - docs/viva/vaibhav.md
+      - docs/viva/README.md
+      - docs/viva/shared_questions.md
+      - docs/definition_of_done.md
+      - LICENSE
+shared:   # owned by the whole team, changed by whoever needs to (via pull request)
+  - OWNERS.yaml
+  - CONTRIBUTIONS.md
+  - SPEC.md
+  - phases/*
+  - docs/decisions.md
+  - docs/experiment_log.md
+  - configs/base.yaml
+  - src/traffic/*.py
+  - src/traffic/*/__init__.py
+  - src/traffic/*/*/__init__.py
+  - scripts/*.sh
+  - results/*
+  - data/*
+  - tests/*
