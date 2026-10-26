@@ -27,3 +27,6 @@ Team T042. Also answer `shared_questions.md` (10 questions everyone must know). 
 23. **What does ablation A2 (random graph) test?** Whether road topology matters or just extra parameters.
 24. **How are H=6/24 compared fairly?** On the intersection of test target timestamps.
 25. **Why bidirectional adjacency as default?** More information and DCRNN also uses both directions; A3 tests directions separately.
+
+## Verification log
+- 2026-10-26 15:53: Kanchan ran `tests/test_load.py tests/test_graph.py tests/test_split_no_leakage.py tests/test_scaling_train_only.py tests/test_windows.py` (18 passed in 0.82s) and `python scripts/prepare_data.py --debug` on their own machine.
