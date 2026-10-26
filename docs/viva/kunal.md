@@ -26,3 +26,6 @@ Team T042. Also answer `shared_questions.md` (10 questions everyone must know). 
 22. **Why zero-initialise the residual head?** Hybrid starts as XGBoost; training can only add improvements.
 23. **How is the gate trained and what is the caveat?** First 80% of val train, last 20% early-stop; val no longer pure for model selection.
 24. **What would it mean if the hybrid doesn't beat STGAT?** STGAT already captures local structure; report honestly.
+
+## Verification log
+- 2026-10-26 10:41: Kunal ran `tests/test_features_no_future.py tests/test_tabular_alignment.py tests/test_hybrid.py` (7 passed in 1.43s) and `python scripts/train_ml.py --model xgb_global --debug` on their own machine.

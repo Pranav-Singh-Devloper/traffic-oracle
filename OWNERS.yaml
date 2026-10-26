@@ -132,7 +132,7 @@ shared:   # owned by the whole team, changed by whoever needs to (via pull reque
   - .mailmap
   - docs/TEAM_WORKFLOW.md
   - scripts/owners.py
-  - scripts/first_commit.py
+  - join.py
   - CONTRIBUTIONS.md
   - SPEC.md
   - phases/*

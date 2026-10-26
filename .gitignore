@@ -27,3 +27,4 @@ results/predictions_val/
 results/ablations/predictions/
 results/hybrid/
 results/debug/
+.uv-bootstrap/
