@@ -129,6 +129,9 @@ members:
       - LICENSE
 shared:   # owned by the whole team, changed by whoever needs to (via pull request)
   - OWNERS.yaml
+  - docs/doc_builder/*
+  - docs/Traffic_Oracle_Complete_Documentation.*
+  - docs/doc_builder/*
   - .mailmap
   - .gitattributes
   - docs/TEAM_WORKFLOW.md
