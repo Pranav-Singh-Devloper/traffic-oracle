@@ -31,7 +31,7 @@ TEAM = {
         "Pranav-Singh-Devloper",
         ["raindeer.social@gmail.com", "pranavsinghprimo@gmail.com"],
     ),
-    "kunal": ("Kunal", "kunaldevsahu", ["kunal.sahu2024@nst.rishihood.edu.in"]),
+    "kunal": ("Kunal", "kunaldevsahu", ["kunaldevsahu5@gmail.com"]),
     "himanshu": ("Himanshu", "HimanshuPal29", ["himanshu.pal2024@nst.rishihood.edu.in"]),
     "kanchan": ("Kanchan", "kanchan97-cp", ["bansalkanchan23@gmail.com"]),
     "vaibhav": ("Vaibhav", "VaibhavSingh50", ["vaibhavsingh0564@gmail.com"]),
