@@ -130,6 +130,7 @@ members:
 shared:   # owned by the whole team, changed by whoever needs to (via pull request)
   - OWNERS.yaml
   - .mailmap
+  - .gitattributes
   - docs/TEAM_WORKFLOW.md
   - scripts/owners.py
   - join.py

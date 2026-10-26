@@ -1,0 +1,5 @@
+# Interactive maps are generated output; keep them out of GitHub's language statistics
+results/maps/*.html linguist-generated=true
+results/figures/** linguist-generated=true
+report/figures/** linguist-generated=true
+docs/doc_builder/*.tex linguist-generated=true
