@@ -18,3 +18,6 @@ Team T042. Also answer `shared_questions.md` (10 questions everyone must know). 
 14. **What does the Random Forest note say about variance?** Var(mean) = rho sigma^2 + (1-rho) sigma^2/B: bagging shrinks the second term, feature subsampling lowers rho (`docs/theory/random_forest.md`).
 15. **What is diffusion convolution, and is it used here?** A K-step random-walk filter on both W and W^T inside a GRU (DCRNN); described in `diffusion_conv.md`, DCRNN-lite itself was not built.
 16. **How would you regenerate every figure from scratch?** Run the chain scripts and `make_maps.py`; all figures are written from CSVs/predictions with no manual steps.
+
+## Verification log
+- 2026-10-26 14:46: Vaibhav ran `tests` (61 passed in 33.43s) on their own machine.
