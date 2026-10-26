@@ -24,4 +24,4 @@ Team T042. Also answer `shared_questions.md` (10 questions everyone must know). 
 20. **What did the three-seed comparison with the GRU show?** Equal at 15 min, slightly better at 30 (not significant), clearly better at 60 min (DM significant); see Table of main results.
 
 ## Verification log
-- 2026-10-24 14:15: Pranav Singh ran the tests for their modules (tests/test_gat_layer.py, tests/test_stgat_shapes.py): 10 passed in 2.78s.
+- 2026-10-24 13:26: Pranav Singh ran the tests for their modules (tests/test_gat_layer.py, tests/test_stgat_shapes.py): 10 passed in 2.76s.
