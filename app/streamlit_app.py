@@ -354,6 +354,10 @@ with st.sidebar:
         format_func=lambda h: f"+{h * 5} min",
     )
     st.markdown("---")
+    if DEMO:
+        st.info(
+            "Demo mode: every 6th test window (30-minute steps) is available. Run the app locally for all 6,832 windows and the Outage Lab."
+        )
     st.caption(
         "Held-out test period: 4 – 27 Jun 2012. The models never saw these days in training. Choose models inside each phase tab."
     )
