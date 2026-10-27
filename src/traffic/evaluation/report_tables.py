@@ -45,7 +45,7 @@ def to_latex(
     return (
         "\\begin{table}[t]\n\\centering\n"
         f"\\caption{{{caption}}}\\label{{{label}}}\n"
-        "\\footnotesize\\resizebox{\\columnwidth}{!}{%\n"
+        "\\footnotesize\\resizebox{\\ifdim\\width>\\columnwidth\\columnwidth\\else\\width\\fi}{!}{%\n"
         f"\\begin{{tabular}}{{{spec}}}\n\\toprule\n{head}\n\\midrule\n"
         + "\n".join(body)
         + "\n\\bottomrule\n\\end{tabular}}\n\\end{table}\n"

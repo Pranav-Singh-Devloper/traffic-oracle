@@ -4,7 +4,7 @@
 \input{../tables/numbers.tex}
 \begin{document}
 \title{Traffic Speed Forecasting on METR-LA: Segment-Level Machine Learning and the Case for Graph Models (Phase 1)}
-\author{\IEEEauthorblockN{Team T042}\IEEEauthorblockA{Pranav Singh, Kunal, Himanshu, Kanchan, and Vaibhav}}
+\author{\IEEEauthorblockN{Team T042}\IEEEauthorblockA{Pranav Singh, Kunal, Himanshu, Kanchan, and Vaibhav\\Live demo and visualisation: \url{https://traffic-oracle.streamlit.app/}}}
 \maketitle
 
 \begin{abstract}
@@ -20,6 +20,7 @@ Congestion on a freeway does not stay where it starts: a jam's tail moves upstre
 Per-segment models see only their own series and can use this only indirectly.
 Our hypothesis is that graph-aware models help most at longer horizons and during peaks.
 Phase 1 builds the data pipeline and evaluation protocol, tests how far segment-level machine learning goes, and quantifies, with a ``bridge'' experiment, how much of the graph benefit hand-made spatial features capture.
+A live demo and visualisation of all models is available at \url{https://traffic-oracle.streamlit.app/}.
 Contributions: (i) a leakage-safe protocol with masked metrics; (ii) five ML forecasters and three baselines evaluated on all horizons, peak/off-peak and congested/free-flow slices; (iii) a gap analysis with paired block-bootstrap confidence intervals.
 
 \section{Related Work}
@@ -58,16 +59,25 @@ The daily lag $t-288$ lies outside the history window and is kept off in the mai
 
 \section{Methods}
 \textbf{Baselines.} Persistence, historical average (per day-of-week and time-of-day, train only), seasonal naive (same time yesterday).
-\textbf{XGBoost.} Additive trees with a second-order objective and regularisation $\gamma T+\tfrac12\lambda\|w\|^2$ \cite{chen2016xgboost}; Optuna chooses the loss (absolute error was selected) and tree parameters on the validation split.
+\textbf{XGBoost.} Additive trees with a second-order objective and regularisation $\gamma T+\tfrac12\lambda\|w\|^2$ \cite{chen2016xgboost}; Optuna chooses the loss (absolute error was selected) and the tree parameters on the validation split (Section~\ref{sec:setup}).
 \emph{Per-segment}: one model per sensor and horizon (15, 30, 60~min); \emph{pooled}: one model per horizon across sensors.
 \textbf{Random Forest.} Bagged deep trees with feature subsampling \cite{breiman2001rf}, natively multi-output (one forest predicts all 12 horizons).
 \textbf{XGB-spatial.} The pooled model plus the neighbour features above.
 
-\section{Experimental Setup}
+\section{Experimental Setup}\label{sec:setup}
 Splits are chronological by timestamp: \splitTrainStart--\splitTrainEnd{} train, \splitValStart--\splitValEnd{} validation, \splitTestStart--\splitTestEnd{} test.
 Windows are built inside each split so no input or target crosses a boundary.
 Scalers, imputation means, the historical-average table and all hyperparameters use train (or validation for tuning) only.
-Tuning budget: 15 Optuna trials per XGBoost variant and 6 for the forest (reduced to suit a laptop); pooled models are trained on a random 25\% of training rows and the forest on 10\%, which likely understates their accuracy.
+Pooled models are trained on a random 25\% of training rows and the forest on 10\% (to suit a laptop), which likely understates their accuracy.
+\textbf{Hyperparameter tuning.} All tree models were tuned with Optuna's TPE sampler (seed 42) on the validation split only; the test split is never touched.
+Each XGBoost variant had \tuneTrialsGlobal{} trials over the space in Table~\ref{tab:tuning}.
+The objective was validation MAE at 30 minutes on a random 300,000-row training and 150,000-row validation sample with early stopping, and the selected values are reused for every horizon; per-segment models share one setting tuned on a pooled sample of 20 sensors.
+The forest had \tuneTrialsRf{} trials (Table~\ref{tab:tuningrf}) scored on the mean validation MAE over all 12 horizons.
+The loss was the most influential choice: absolute error reached \tuneAbsGlobal{} mph validation MAE for the pooled model against \tuneSqGlobal{} for squared error, and all \tuneHubTrialsGlobal{} pseudo-Huber trials diverged (errors in the tens of thousands of mph), so absolute error was selected for every XGBoost model (spatial: \tuneAbsSpatial{} vs.\ \tuneSqSpatial{}; per-segment: \tuneAbsSegment{} vs.\ \tuneSqSegment{}).
+The pooled and spatial models ended with identical values because the same trial won on the same seeded search.
+The budgets were deliberately small (15 and 6 trials, a 400-tree cap that early stopping never reached), so tuned results are likely conservative; the deep models studied in Phase 2 were \emph{not} tuned.
+\input{../tables/tuning.tex}
+\input{../tables/tuning_rf.tex}
 Models are retrained on train only for test evaluation.
 Significance uses the Diebold--Mariano test \cite{diebold1995comparing} with a Newey--West long-run variance \cite{newey1987simple} and the small-sample correction of \cite{harvey1997testing}, and day-block bootstrap intervals.
 
@@ -98,7 +108,7 @@ The benefit therefore concentrates in peaks and congestion, as the propagation h
 
 \section{Discussion and Limitations}
 Hand-made neighbour features capture part of the spatial signal cheaply; whether a learned graph model captures more is the Phase 2 question.
-Limitations: one city and season; speed-only data; a fixed distance-based graph; reduced tuning and subsampled training rows; MAPE is unstable at low speeds; the test period has more outages than training.
+Limitations: one city and season; speed-only data; a fixed distance-based graph; reduced tuning budgets (15/6 Optuna trials) and subsampled training rows; MAPE is unstable at low speeds; the test period has more outages than training.
 
 \section{Conclusion and Phase 2 Plan}
 Segment-level ML is a strong baseline and neighbour information helps modestly, mainly in congestion.

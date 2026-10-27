@@ -2,6 +2,8 @@
 
 Graph attention networks vs. segment-level machine learning for 5-60 minute speed forecasting on the METR-LA freeway sensor network, plus a leakage-safe ML+graph hybrid and an *offline simulated* ramp-metering study. Full specification: [SPEC.md](SPEC.md); build plan: [phases/](phases/00_OVERVIEW.md); decisions: [docs/decisions.md](docs/decisions.md).
 
+> **Live demo and visualisation: <https://traffic-oracle.streamlit.app/>**
+
 > Control experiments are offline simulations on a synthetic network. No live or real-world traffic control is performed or claimed.
 
 ![Error vs horizon](results/figures/error_vs_horizon_all_models.png)

@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{XGBoost search space and selected values (Optuna, validation only).}\label{tab:tuning}
+\footnotesize\resizebox{\ifdim\width>\columnwidth\columnwidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+parameter & search range & per-segment & pooled & spatial \\
+\midrule
+max\_depth & 3--10 & 9 & 10 & 10 \\
+learning rate & 0.02--0.3 (log) & 0.0343 & 0.0402 & 0.0402 \\
+subsample & 0.5--1.0 & 0.503 & 0.543 & 0.543 \\
+colsample\_bytree & 0.5--1.0 & 0.908 & 0.924 & 0.924 \\
+min\_child\_weight & 1--20 & 15 & 6 & 6 \\
+$\lambda$ (L2) & 0.001--10 (log) & 0.824 & 5.22 & 5.22 \\
+$\gamma$ & 0--5 & 3.86 & 3.79 & 3.79 \\
+loss & sq.\ / abs.\ / pseudo-Huber & abs.\ error & abs.\ error & abs.\ error \\
+trees (cap) & 400 (early stopping) & 400 & 400 & 400 \\
+\bottomrule
+\end{tabular}}
+\end{table}

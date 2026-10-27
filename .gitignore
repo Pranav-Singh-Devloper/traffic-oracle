@@ -28,3 +28,5 @@ results/ablations/predictions/
 results/hybrid/
 results/debug/
 .uv-bootstrap/
+~$*
+*.jpg.bak

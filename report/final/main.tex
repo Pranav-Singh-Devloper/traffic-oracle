@@ -4,7 +4,7 @@
 \input{../tables/numbers.tex}
 \begin{document}
 \title{Seeing Congestion Coming: Graph Attention Networks, Segment-Level Machine Learning and a Leakage-Safe Hybrid for Traffic Speed Forecasting on METR-LA}
-\author{\IEEEauthorblockN{Team T042}\IEEEauthorblockA{Pranav Singh, Kunal, Himanshu, Kanchan, and Vaibhav}}
+\author{\IEEEauthorblockN{Team T042}\IEEEauthorblockA{Pranav Singh, Kunal, Himanshu, Kanchan, and Vaibhav\\Live demo and visualisation: \url{https://traffic-oracle.streamlit.app/}}}
 \maketitle
 
 \begin{abstract}
@@ -23,7 +23,7 @@ Per-segment forecasters see only their own series and can exploit this indirectl
 Our hypothesis is that graph-aware models improve on per-segment models mostly at longer horizons and during peaks.
 We test it with controlled comparisons: graph versus no-graph deep models, hand-made versus learned spatial information, and a hybrid that learns only what the per-segment model misses.
 Contributions: (i) a leakage-safe evaluation protocol with masked metrics, autocorrelation-robust significance tests and automatic sanity checks; (ii) a model ladder from baselines through tuned trees and hand-made spatial features to STGAT, evaluated on all horizons, on peak, off-peak and weekend slices, and on congested versus free-flow targets; (iii) an out-of-fold residual hybrid and a learned gate; (iv) ablations, maps, attention analysis and a simulated ramp-metering study, with null results reported.
-Every number is produced by scripts from saved results.
+Every number is produced by scripts from saved results, and a live demo and visualisation of all models is available at \url{https://traffic-oracle.streamlit.app/}.
 
 \section{Related Work}
 Classical forecasters use historical averages and ARIMA-type models.
@@ -99,7 +99,17 @@ XGBoost handles local autoregression and calendar effects; we train STGAT on the
 XGBoost's in-sample residuals are unrealistically small, so residuals come from \emph{out-of-fold} forecasts: training time is split into five chronological blocks, block $k\ge2$ is predicted by a model trained on earlier blocks with a gap of $H+F-1$ anchors, and block 1 is dropped.
 Two alternatives are a gate $\hat y=w\hat y_{\mathrm{STGAT}}+(1-w)\hat y_{\mathrm{XGB}}$, with $w$ a small network of horizon, peak flag, time of day and window missing rate, trained on the first 80\% of validation and stopped on the last 20\%, and the plain average.
 
-\textbf{Budgets.} Tuning used 15 Optuna trials per XGBoost variant (6 for the forest); pooled XGBoost trained on a random 25\% of rows and the forest on 10\%, and every pooled XGBoost model used all 400 allowed trees, so tree results are likely conservative.
+\textbf{Hyperparameter tuning.} All tree models were tuned with Optuna's TPE sampler (seed 42) on the validation split only; the test split is never touched.
+Each XGBoost variant had \tuneTrialsGlobal{} trials over the space in Table~\ref{tab:tuning}.
+The objective was validation MAE at 30 minutes on a random 300,000-row training and 150,000-row validation sample with early stopping, and the selected values are reused for every horizon; per-segment models share one setting tuned on a pooled sample of 20 sensors.
+The forest had \tuneTrialsRf{} trials (Table~\ref{tab:tuningrf}) scored on the mean validation MAE over all 12 horizons.
+The loss was the most influential choice: absolute error reached \tuneAbsGlobal{} mph validation MAE for the pooled model against \tuneSqGlobal{} for squared error, and all \tuneHubTrialsGlobal{} pseudo-Huber trials diverged (errors in the tens of thousands of mph), so absolute error was selected for every XGBoost model (spatial: \tuneAbsSpatial{} vs.\ \tuneSqSpatial{}; per-segment: \tuneAbsSegment{} vs.\ \tuneSqSegment{}).
+The pooled and spatial models ended with identical values because the same trial won on the same seeded search.
+The budgets were deliberately small (15 and 6 trials, a 400-tree cap that early stopping never reached), so tuned results are likely conservative; the deep models were \emph{not} tuned (see below).
+\input{../tables/tuning.tex}
+\input{../tables/tuning_rf.tex}
+\textbf{Deep models.} Their hyperparameters (width 64, four heads, two blocks, dropout 0.1, learning rate $10^{-3}$) were set by hand and \emph{not} tuned; they were only probed by one-factor ablations.\\
+\textbf{Budgets.} Pooled XGBoost trained on a random 25\% of rows and the forest on 10\%, and every pooled XGBoost model used all 400 allowed trees, so tree results are likely conservative.
 
 \section{Results}
 \subsection{Overall}
@@ -187,7 +197,7 @@ Forecasts therefore gave no measurable benefit in this simulation (Fig.~\ref{fig
 \section{Discussion, Limitations and Ethics}
 Taken together, the evidence supports a measured version of the hypothesis: neighbour information helps most in congestion and peaks, and a learned graph model's edge appears at long range, but the effects are modest and well-tuned per-segment trees remain hard to beat; the best results come from combining them with the graph model.
 Results that did not match the hypothesis are reported as found: spatial features do not help more at longer horizons; STGAT ties the GRU at 15 minutes; the ablations do not show the road graph beating a no-neighbour graph; attention does not shift between peak and night; forecasts did not help the simulated controller.
-Limitations: one city and season; speed-only data; a fixed distance-based graph; reduced tuning and training budgets (including a tree cap that was always reached); STGAT simplified for compute; ablations on one seed; the literature (DCRNN) protocol was not reproduced, so numbers are not directly comparable with published tables; the test period has more outages than training; MAPE is unstable at low speeds; the control study is synthetic and open loop.
+Limitations: one city and season; speed-only data; a fixed distance-based graph; reduced tuning and training budgets (including a tree cap that was always reached) and no tuning of the deep models; STGAT simplified for compute; ablations on one seed; the literature (DCRNN) protocol was not reproduced, so numbers are not directly comparable with published tables; the test period has more outages than training; MAPE is unstable at low speeds; the control study is synthetic and open loop.
 The data are aggregate loop-detector speeds, so privacy risk is low; the main ethical risk is over-claiming real-world control benefits, which we avoid.
 Much of the code and documentation was produced with an AI coding assistant, which we disclose.
 

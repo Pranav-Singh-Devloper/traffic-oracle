@@ -22,6 +22,7 @@
 {\large Team T042}\\[4pt]
 {\large Pranav Singh \ensuremath{\cdot} Kunal \ensuremath{\cdot} Himanshu \ensuremath{\cdot} Kanchan \ensuremath{\cdot} Vaibhav}\\[4pt]
 {\large Repository: github.com/\allowbreak{}Pranav-Singh-Devloper/\allowbreak{}traffic-oracle}\\[4pt]
+{\large Live demo and visualisation: traffic-oracle.streamlit.app}\\[4pt]
 {\large Document generated from the project's result files (results/\allowbreak{}metrics, configs, data manifest)}
 \end{titlepage}
 \setcounter{tocdepth}{2}\tableofcontents
@@ -29,6 +30,8 @@
 \clearpage
 \section*{1. Executive summary}\addcontentsline{toc}{section}{1. Executive summary}
 This document describes the Traffic Oracle project end to end: the data, every preprocessing decision, the evaluation protocol, each model and its hyperparameters, all results with their uncertainty, the ablations, the maps, the simulated control study, the engineering set-up, and the limitations. Every number is read from the project's result files; nothing is typed by hand.
+
+\textbf{Live demo and visualisation:} https:/\allowbreak{}/\allowbreak{}traffic-oracle.streamlit.app/\allowbreak{} (interactive map, per-sensor forecasts, scoreboards, gap analysis, hybrids, ablations).
 
 \textbf{Task.} Forecast freeway speed (mph) at 207 loop-detector sensors in Los Angeles, 5 to 60 minutes ahead (12 steps of 5 minutes), from the previous 60 minutes (12 steps). \textbf{Question.} Does information from neighbouring sensors (a road graph) improve on forecasts that use each sensor's own history, and if so, where?
 
@@ -923,6 +926,8 @@ Seeds & 0, 1, 2 \\
 Device & Apple M3 Pro GPU (PyTorch MPS), 4 CPU threads, low priority \\
 \end{longtable}}
 {\footnotesize\itshape Table 22. Deep-learning training configuration (same for STGAT and GRU).}\par\medskip
+
+\begin{callout}The deep models were not hyperparameter-tuned. Width 64, 4 heads, 2 blocks, dropout 0.1, learning rate 1e-3 and weight decay 1e-4 were set by hand; they were probed only by the one-factor ablations in Section 13. Only the tree models were tuned (Optuna, Section 9.3).\end{callout}
 
 \subsection*{10.5 Compute study and simplification (ADR-007)}\addcontentsline{toc}{subsection}{10.5 Compute study and simplification (ADR-007)}
 {\scriptsize\renewcommand{\arraystretch}{1.15}\begin{longtable}{>{\raggedright\arraybackslash}p{0.5600\dimexpr\linewidth-6\tabcolsep\relax}>{\raggedright\arraybackslash}p{0.2000\dimexpr\linewidth-6\tabcolsep\relax}>{\raggedright\arraybackslash}p{0.2400\dimexpr\linewidth-6\tabcolsep\relax}}

@@ -50,6 +50,65 @@ def main() -> None:
         )
     readme = Path("README.md")
     insert_readme_block(readme, md)
+    import yaml
+
+    rows = [
+        ("max_depth", "3--10", "max_depth"),
+        ("learning rate", "0.02--0.3 (log)", "learning_rate"),
+        ("subsample", "0.5--1.0", "subsample"),
+        ("colsample_bytree", "0.5--1.0", "colsample_bytree"),
+        ("min_child_weight", "1--20", "min_child_weight"),
+        ("$\\lambda$ (L2)", "0.001--10 (log)", "reg_lambda"),
+        ("$\\gamma$", "0--5", "gamma"),
+        ("loss", "sq.\\ / abs.\\ / pseudo-Huber", "objective"),
+        ("trees (cap)", "400 (early stopping)", "n_estimators"),
+    ]
+    best = {
+        k: yaml.safe_load(Path(f"configs/ml/{k}.best.yaml").read_text())["model"]["params"]
+        for k in ("xgb_per_segment", "xgb_global", "xgb_spatial", "rf_multioutput")
+    }
+
+    def fmt(v):
+        if isinstance(v, float):
+            return f"{v:.3g}"
+        return (
+            str(v)
+            .replace("reg:absoluteerror", "abs.\\ error")
+            .replace("reg:squarederror", "sq.\\ error")
+        )
+
+    trows = []
+    for label, rng, key in rows:
+        trows.append(
+            [label, rng]
+            + [
+                fmt(best[k].get(key, "--"))
+                for k in ("xgb_per_segment", "xgb_global", "xgb_spatial")
+            ]
+        )
+    tdf = pd.DataFrame(
+        trows, columns=["parameter", "search range", "per-segment", "pooled", "spatial"]
+    )
+    (TAB / "tuning.tex").write_text(
+        to_latex(
+            tdf,
+            "XGBoost search space and selected values (Optuna, validation only).",
+            "tab:tuning",
+        )
+    )
+    rfp = best["rf_multioutput"]
+    rdf = pd.DataFrame(
+        [
+            ["trees", "60--150", str(rfp["n_estimators"])],
+            ["max_depth", "8--30", str(rfp["max_depth"])],
+            ["max_features", "0.2 / 0.33 / 0.5", str(rfp["max_features"])],
+            ["min_samples_leaf", "1--20", str(rfp["min_samples_leaf"])],
+        ],
+        columns=["parameter", "search range", "selected"],
+    )
+    (TAB / "tuning_rf.tex").write_text(
+        to_latex(rdf, "Random Forest search space and selected values (6 trials).", "tab:tuningrf")
+    )
     ab_path = MET / "ablations.csv"
     if ab_path.exists():
         ab = pd.read_csv(ab_path)

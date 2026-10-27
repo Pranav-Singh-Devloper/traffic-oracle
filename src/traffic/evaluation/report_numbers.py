@@ -115,6 +115,26 @@ def build_macros(met: Path) -> dict[str, str]:
             if mt_.get("n_params"):
                 m[f"nParams{tag}"] = f"{mt_['n_params']:,}".replace(",", "{,}")
                 m[f"trainMin{tag}"] = _fmt(mt_["train_seconds"] / 60, 0)
+    for key, tag in (
+        ("xgb_global", "Global"),
+        ("xgb_spatial", "Spatial"),
+        ("xgb_per_segment", "Segment"),
+        ("rf_multioutput", "Rf"),
+    ):
+        f = met / f"tuning_{key}.csv"
+        if not f.exists():
+            continue
+        t = pd.read_csv(f)
+        m[f"tuneTrials{tag}"] = str(len(t))
+        m[f"tuneBest{tag}"] = _fmt(t.value.min(), 3)
+        m[f"tuneMedian{tag}"] = _fmt(t.value.median(), 3)
+        if "params_objective" in t:
+            for obj, short in (("reg:absoluteerror", "Abs"), ("reg:squarederror", "Sq")):
+                v = t[t.params_objective == obj].value
+                if len(v):
+                    m[f"tune{short}{tag}"] = _fmt(v.min(), 2)
+            hub = t[t.params_objective == "reg:pseudohubererror"]
+            m[f"tuneHubTrials{tag}"] = str(len(hub))
     eda = met / "eda_stats.json"
     if eda.exists():
         s = json.loads(eda.read_text())

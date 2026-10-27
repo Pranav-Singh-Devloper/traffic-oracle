@@ -264,6 +264,7 @@ blocks.append(
             "Team T042",
             "Pranav Singh · Kunal · Himanshu · Kanchan · Vaibhav",
             "Repository: github.com/Pranav-Singh-Devloper/traffic-oracle",
+                         "Live demo and visualisation: traffic-oracle.streamlit.app",
             "Document generated from the project's result files (results/metrics, configs, data manifest)",
         ],
     }
@@ -279,6 +280,7 @@ P(
     "control study, the engineering set-up, and the limitations. Every number is read from the project's result files; "
     "nothing is typed by hand."
 )
+P("**Live demo and visualisation:** https://traffic-oracle.streamlit.app/ (interactive map, per-sensor forecasts, scoreboards, gap analysis, hybrids, ablations).")
 P(
     "**Task.** Forecast freeway speed (mph) at 207 loop-detector sensors in Los Angeles, 5 to 60 minutes ahead (12 steps of "
     "5 minutes), from the previous 60 minutes (12 steps). **Question.** Does information from neighbouring sensors (a road "
@@ -1158,6 +1160,7 @@ TABLE(
     widths=[28, 72],
     small=True,
 )
+NOTE("The deep models were not hyperparameter-tuned. Width 64, 4 heads, 2 blocks, dropout 0.1, learning rate 1e-3 and weight decay 1e-4 were set by hand; they were probed only by the one-factor ablations in Section 13. Only the tree models were tuned (Optuna, Section 9.3).")
 H2("10.5 Compute study and simplification (ADR-007)")
 TABLE(
     ["Configuration", "Time per iteration", "Time per epoch"],

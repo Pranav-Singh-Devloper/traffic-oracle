@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{Random Forest search space and selected values (6 trials).}\label{tab:tuningrf}
+\footnotesize\resizebox{\ifdim\width>\columnwidth\columnwidth\else\width\fi}{!}{%
+\begin{tabular}{lrr}
+\toprule
+parameter & search range & selected \\
+\midrule
+trees & 60--150 & 135 \\
+max\_depth & 8--30 & 12 \\
+max\_features & 0.2 / 0.33 / 0.5 & 0.5 \\
+min\_samples\_leaf & 1--20 & 11 \\
+\bottomrule
+\end{tabular}}
+\end{table}

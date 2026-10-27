@@ -374,8 +374,9 @@ chapter("03 Trees", "CHAPTER 03", "Trees that read the clock", "Gradient-boosted
   s.addText("Questions welcome — every number is in the repository.", { placeholder: "body" });
   T(s, [{ text: "TEAM T042", options: { bold: true, color: AMBER, charSpacing: 3, breakLine: true } },
         { text: "Pranav Singh · Kunal · Himanshu · Kanchan · Vaibhav", options: { breakLine: true } },
-        { text: "github.com/Pranav-Singh-Devloper/traffic-oracle", options: { color: MUTED } }],
-    { x: 0.8, y: 3.3, w: 11, h: 1.1, fontSize: 18 });
+        { text: "github.com/Pranav-Singh-Devloper/traffic-oracle", options: { color: MUTED, breakLine: true } },
+        { text: "Live demo: traffic-oracle.streamlit.app", options: { color: TEAL, bold: true } }],
+    { x: 0.8, y: 3.3, w: 11, h: 1.4, fontSize: 18 });
   s.addNotes("Close Phase 1 and invite questions.");
 }
 
