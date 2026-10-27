@@ -108,6 +108,13 @@ def build_macros(met: Path) -> dict[str, str]:
             wh = {15: "Fifteen", 30: "Thirty", 60: "Sixty"}.get(r.horizon_min)
             if wh:
                 m[f"abl{nodigits(camel(r.ablation) + camel(r.variant))}{wh}"] = _fmt(r.mean)
+    for tag, name in (("Stgat", "stgat_seed0"), ("Gru", "gru_nograph_seed0")):
+        f = met.parent / "predictions" / f"{name}.npz"
+        if f.exists():
+            mt_ = json.loads(str(np.load(f)["meta"]))
+            if mt_.get("n_params"):
+                m[f"nParams{tag}"] = f"{mt_['n_params']:,}".replace(",", "{,}")
+                m[f"trainMin{tag}"] = _fmt(mt_["train_seconds"] / 60, 0)
     eda = met / "eda_stats.json"
     if eda.exists():
         s = json.loads(eda.read_text())
