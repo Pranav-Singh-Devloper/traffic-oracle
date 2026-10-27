@@ -107,6 +107,8 @@ members:
       - src/traffic/viz/*
       - scripts/make_maps.py
       - scripts/make_docs.py
+      - scripts/make_demo_bundle.py
+      - app/demo_data/*
       - scripts/run_phase2_chain.sh
       - README.md
       - app/*

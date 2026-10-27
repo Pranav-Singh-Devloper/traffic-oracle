@@ -52,6 +52,13 @@ PALETTE = {
     "seasonal_naive": "#566079",
 }
 
+import os
+from types import SimpleNamespace
+
+BUNDLE = ROOT / "app" / "demo_data" / "bundle.npz"
+FULL = (ROOT / "data/raw/metr-la.h5").exists() and (PRED / "persistence.npz").exists()
+DEMO = BUNDLE.exists() and (os.environ.get("TRAFFIC_ORACLE_DEMO") == "1" or not FULL)
+
 st.set_page_config(
     page_title="Traffic Oracle", page_icon="🚦", layout="wide", initial_sidebar_state="expanded"
 )
@@ -87,8 +94,32 @@ button[data-baseweb="tab"] {background: rgba(255,255,255,.04); border-radius: 12
 
 
 # --------------------------------------------------------------------------- data
+@st.cache_resource(show_spinner="Loading the demo bundle …")
+def load_bundle():
+    return dict(np.load(BUNDLE, allow_pickle=False))
+
+
 @st.cache_resource(show_spinner="Loading METR-LA and the road graph …")
 def load_world():
+    if DEMO:  # lightweight stand-in with just what the views need
+        b = load_bundle()
+        speed = b["slab_speed"].astype(np.float32)
+        index = pd.date_range(
+            pd.Timestamp(int(b["slab_start_ns"])), periods=len(speed), freq="5min"
+        )
+        loc_df = pd.DataFrame(
+            {"sensor_id": b["sensor_ids"], "latitude": b["lat"], "longitude": b["lon"]}
+        )
+        prep = SimpleNamespace(
+            speed=speed,
+            mask=speed > 0,
+            index=index,
+            windows={"test": SimpleNamespace(anchors=b["anchor_pos"])},
+            data=SimpleNamespace(locations=loc_df, sensor_ids=list(b["sensor_ids"])),
+            chan=None,
+            scaler=None,
+        )
+        return None, prep
     from traffic.config import load_config
     from traffic.data.pipeline import prepare
 
@@ -102,12 +133,22 @@ def load_world():
 
 @st.cache_data(show_spinner=False)
 def load_truth():
+    if DEMO:
+        b = load_bundle()
+        y = b["y_true"].astype(np.float32)
+        return y, y > 0, b["tts"].astype("datetime64[ns]")
     z = np.load(PRED / "persistence.npz")
     return z["y_true"], z["mask"], z["target_ts"].astype("datetime64[ns]")
 
 
 @st.cache_data(show_spinner="Reading saved forecasts …", max_entries=8)
 def load_model(name: str) -> np.ndarray | None:
+    if DEMO:
+        return (
+            load_bundle().get(f"pred_{name}", None).astype(np.float32)
+            if f"pred_{name}" in load_bundle()
+            else None
+        )
     files = sorted(PRED.glob(f"{name}_seed*.npz")) or (
         [PRED / f"{name}.npz"] if (PRED / f"{name}.npz").exists() else []
     )
@@ -221,7 +262,7 @@ def dark_fig(fig: go.Figure, h: int = 420) -> go.Figure:
 
 
 # --------------------------------------------------------------------------- guards
-if not (PRED / "persistence.npz").exists() or not (ROOT / "data/raw/metr-la.h5").exists():
+if not DEMO and not FULL:
     st.markdown(
         '<div class="hero"><span class="tag">TEAM T042</span><h1>Traffic Oracle</h1><p>Test bench for our METR-LA forecasting models</p></div>',
         unsafe_allow_html=True,
@@ -271,6 +312,8 @@ P2_MODELS = [
 
 
 def has_model(m: str) -> bool:
+    if DEMO:
+        return f"pred_{m}" in load_bundle()
     return (PRED / f"{m}.npz").exists() or bool(list(PRED.glob(f"{m}_seed*.npz")))
 
 
@@ -770,8 +813,16 @@ with phase2:
             '<div class="note"><b>Outage Lab.</b> Silence some sensors in the last hour of input (as a real outage would) and re-run the networks live. A graph model can lean on neighbours; a no-graph model cannot.</div>',
             unsafe_allow_html=True,
         )
-        have_ck = (CK / "stgat_seed0.pt").exists() and (CK / "gru_nograph_seed0.pt").exists()
-        if not have_ck:
+        have_ck = (
+            (not DEMO)
+            and (CK / "stgat_seed0.pt").exists()
+            and (CK / "gru_nograph_seed0.pt").exists()
+        )
+        if DEMO:
+            st.info(
+                "The Outage Lab re-runs the trained networks live, so it needs the saved checkpoints. Run the app locally (see the README) to use it."
+            )
+        elif not have_ck:
             st.warning(
                 "Checkpoints not found (checkpoints/dl/*.pt are git-ignored). Train them with `bash scripts/run_dl_chain.sh` to enable the lab."
             )
