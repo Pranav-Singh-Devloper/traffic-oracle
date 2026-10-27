@@ -21,6 +21,7 @@ dev = ["pytest", "ruff", "black", "pre-commit", "torch-geometric"]
 where = ["src"]
 
 [tool.ruff]
+extend-exclude = ["docs/doc_builder", "docs/deck_builder"]
 line-length = 100
 src = ["src", "tests", "scripts"]
 [tool.ruff.lint]
@@ -28,6 +29,7 @@ select = ["E", "F", "I", "B", "UP", "N"]
 ignore = ["N803", "N806", "N812"]  # H, F, X, Y are standard math names
 
 [tool.black]
+extend-exclude = "docs/(doc_builder|deck_builder)"
 line-length = 100
 
 [tool.pytest.ini_options]
