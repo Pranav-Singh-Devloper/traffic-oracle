@@ -32,6 +32,13 @@ make test      # unit + (if data present) end-to-end debug tests
 ```
 `--debug` flags on the training scripts run a tiny CPU config. Everything auto-detects the device (CUDA, Apple MPS, CPU).
 
+## Try the models: Streamlit test bench
+```bash
+uv pip install -e ".[app]"     # streamlit, plotly, pydeck
+make app                       # or: streamlit run app/streamlit_app.py
+```
+Two top-level tabs: **Phase 1** (baselines and tree models, live map, sensor forecasts, scoreboard, "do neighbours help?") and **Phase 2** (STGAT, GRU, hybrids, ablations, and an *Outage Lab* that silences sensors and re-runs the saved networks live). Needs the dataset (`python3 join.py`) and the saved forecasts in `results/predictions/`; the Outage Lab also needs `checkpoints/dl/*.pt` (run the DL chain).
+
 ## Hardware and runtimes (this run)
 MacBook with Apple M3 Pro (11 cores, 18 GB), run at low priority with 6 CPU cores / 4 torch threads and the MPS GPU. Approximate wall-clock: ML chain ~50 min; GRU-nograph ~8 min/seed; STGAT ~28 min/seed (40 epochs); OOF + hybrids ~80 min; ablations ~3-4 h. Exact timings per run are in [docs/experiment_log.md](docs/experiment_log.md). The budgets were deliberately reduced for a laptop (see ADR-006/007), so absolute numbers are not tuned to the limit.
 

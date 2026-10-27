@@ -109,6 +109,8 @@ members:
       - scripts/make_docs.py
       - scripts/run_phase2_chain.sh
       - README.md
+      - app/*
+      - .streamlit/*
       - slides/*
       - report/*
       - Makefile

@@ -15,6 +15,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+app = ["streamlit", "plotly", "pydeck"]
 dev = ["pytest", "ruff", "black", "pre-commit", "torch-geometric"]
 
 [tool.setuptools.packages.find]
@@ -39,3 +40,4 @@ markers = ["real_data: needs data/raw/metr-la.h5 (skipped when absent)"]
 "scripts/make_eda_summary.py" = ["E501"]
 "scripts/make_docs.py" = ["E501"]
 "docs/doc_builder/build_content.py" = ["E501", "N802"]
+"app/streamlit_app.py" = ["E501", "E402", "B905", "N806"]
