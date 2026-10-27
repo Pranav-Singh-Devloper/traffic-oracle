@@ -120,6 +120,7 @@ members:
       - requirements.txt
       - .github/*
       - .pre-commit-config.yaml
+      - .python-version
       - .gitignore
       - tests/test_config.py
       - tests/test_end_to_end_debug.py
