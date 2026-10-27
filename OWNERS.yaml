@@ -137,11 +137,13 @@ shared:   # owned by the whole team, changed by whoever needs to (via pull reque
   - docs/deck_builder/*
   - docs/Traffic_Oracle_Presentation.pptx
   - docs/Traffic_Oracle_Final_Report.pdf
+  - docs/Traffic_Oracle_Phase1_Presentation.pptx
   - docs/Traffic_Oracle_Complete_Documentation.*
   - docs/doc_builder/*
   - docs/deck_builder/*
   - docs/Traffic_Oracle_Presentation.pptx
   - docs/Traffic_Oracle_Final_Report.pdf
+  - docs/Traffic_Oracle_Phase1_Presentation.pptx
   - .mailmap
   - .gitattributes
   - docs/TEAM_WORKFLOW.md
